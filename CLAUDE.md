@@ -1,0 +1,61 @@
+# CLAUDE.md - Project Intelligence
+
+## Project Overview
+
+Nexus Emergency Management is a unified infrastructure monitoring and emergency response platform combining TRDAP (Technical Resource Deployment and Analysis Platform) deployment analysis with Orbital-Phycom physics-informed monitoring. It provides real-time telemetry visualization, emergency intervention protocols, and AI-assisted infrastructure management.
+
+## Architecture
+
+- **Frontend**: React 19 + TypeScript + Vite + Tailwind CSS 4
+- **UI Library**: shadcn/ui (base-nova style) with base-ui primitives
+- **AI Backend**: Gemini API via server-side Express proxy (`server/api.ts`)
+- **Charting**: Recharts
+- **Animations**: Motion (framer-motion successor)
+- **Path alias**: `@/` maps to `./src/`
+
+## Key Directories
+
+```
+src/
+  components/       # Page-level components (dashboard panels)
+  components/ui/    # shadcn UI primitives (editable - these are the project's copies)
+  services/         # API integration layer (gemini.ts calls server proxy)
+  lib/              # Utilities, physics constants, data models
+server/             # Express API proxy (keeps API keys server-side)
+.ai/                # AI agent configuration, security policy, protocol docs
+```
+
+## Critical Rules
+
+1. **NEVER expose API keys in client-side code.** All AI/LLM calls route through `server/api.ts`. The Vite config must NOT use `define` to embed secrets.
+2. **Emergency actions require confirmation.** Any action with `requiresAuth: true` must prompt before execution.
+3. **Physics constants live in `src/lib/constants.ts`.** Ported from JinnZ2/orbital-phycom - keep in sync.
+4. **All imports use `@/` alias** which resolves to `src/`. All source files must live under `src/`.
+
+## Development
+
+```bash
+npm install            # Install dependencies
+npm run dev:client     # Start Vite dev server on :3000
+npm run dev:server     # Start API proxy on :3001
+npm run build          # Production build
+npm run lint           # TypeScript type checking
+```
+
+The Vite dev server proxies `/api/*` requests to the Express server on port 3001.
+
+## Connected Repositories
+
+- **orbital-phycom** (JinnZ2/orbital-phycom) - Python orbital mechanics simulation. Physics constants and protocol specs ported to `src/lib/constants.ts` and `src/lib/orbital.ts`.
+- **Infrastructure-assistance** (JinnZ2/Infrastructure-assistance) - Next.js infrastructure resilience app. TRDAP concepts and data models inform `src/lib/trdap.ts`.
+
+## Naming Conventions
+
+- Components: PascalCase (`TRDAPDashboard.tsx`)
+- Services/libs: camelCase (`gemini.ts`, `orbital.ts`)
+- Types: PascalCase interfaces in `src/types.ts`
+- CSS: Tailwind utility classes, dark mode via `.dark` class on root
+
+## Testing
+
+Run `npm run lint` for TypeScript type checking. The project relies on TypeScript strict compilation for compile-time safety.

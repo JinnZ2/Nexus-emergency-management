@@ -1,5 +1,6 @@
 {
-  "name": "Nexus Infrastructure Assistant",
-  "description": "A unified platform combining TRDAP deployment analysis and Orbital-Phycom physics-informed monitoring for advanced infrastructure assistance.",
+  "name": "Nexus Emergency Management",
+  "description": "Unified infrastructure monitoring and emergency response platform combining TRDAP deployment analysis with Orbital-Phycom physics-informed monitoring.",
+  "version": "2.1.0",
   "requestFramePermissions": []
 }
