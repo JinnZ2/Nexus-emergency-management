@@ -1,33 +1,20 @@
-
-import { GoogleGenAI } from "@google/genai";
-
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
-
-export async function getInfrastructureAssistance(prompt: string, context: string) {
+export async function getInfrastructureAssistance(prompt: string, context: string): Promise<string> {
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: `
-        You are the Nexus Infrastructure Assistant. 
-        You help users manage a complex infrastructure environment that combines TRDAP (Technical Resource Deployment and Analysis Platform) and Orbital-Phycom (Physics-informed Orbital Monitoring).
-        
-        Emergency & Protocol Context:
-        - You have access to Emergency Management protocols (Kill Switches, Safe Mode).
-        - You follow the Agent Protocol (JSON-LD manifest) for machine-to-machine interaction.
-        - High-risk actions require explicit user confirmation and dual-factor AI verification.
-        
-        Current Infrastructure Context:
-        ${context}
-        
-        User Query:
-        ${prompt}
-        
-        Provide a concise, professional, and technical response.
-      `,
+    const response = await fetch('/api/v1/assistant', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt, context }),
     });
-    return response.text;
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'Unknown error' }));
+      throw new Error(error.error || `HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.response || "I couldn't generate a response.";
   } catch (error) {
-    console.error("Gemini API Error:", error);
+    console.error('Assistant API Error:', error);
     return "I'm sorry, I encountered an error while processing your request. Please check your infrastructure logs.";
   }
 }

@@ -1,4 +1,3 @@
-
 export interface Pipeline {
   id: string;
   name: string;
@@ -36,4 +35,18 @@ export interface OrbitalNode {
 export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
+}
+
+export interface AgentManifest {
+  system: string;
+  version: string;
+  protocols: AgentProtocolEntry[];
+  endpoints: Record<string, string>;
+  safety_constraints: Record<string, string>;
+}
+
+export interface AgentProtocolEntry {
+  id: string;
+  type: string;
+  access: string;
 }

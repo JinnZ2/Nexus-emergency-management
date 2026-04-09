@@ -1,0 +1,48 @@
+{
+  "name": "Nexus Infrastructure Assistant",
+  "version": "2.1.0-emergency",
+  "capabilities": {
+    "trdap": {
+      "description": "Technical Resource Deployment and Analysis Platform",
+      "access": "read_write",
+      "metrics": ["latency", "cpu", "memory", "status"],
+      "service_layers": ["edge", "compute", "storage", "core"],
+      "total_services": 16
+    },
+    "orbital_phycom": {
+      "description": "Physics-informed Orbital Monitoring",
+      "access": "read_only",
+      "physics_model": "J2 perturbation + atmospheric drag",
+      "compression_ratio": 6944,
+      "protocol": "PHYCOM seed expansion",
+      "constants_file": "src/lib/constants.ts"
+    },
+    "emergency": {
+      "description": "Emergency Intervention Protocols",
+      "access": "restricted",
+      "requires_auth": true,
+      "actions": ["kill_switch", "safe_mode", "cache_flush", "bgp_reroute"]
+    }
+  },
+  "constraints": {
+    "max_cpu_threshold_percent": 95,
+    "orbital_eccentricity_limit": 0.05,
+    "kill_switch_auth": "multi_factor_ai",
+    "max_prompt_chars": 4000,
+    "api_keys_server_side_only": true
+  },
+  "connected_repos": [
+    {
+      "name": "orbital-phycom",
+      "url": "https://github.com/JinnZ2/orbital-phycom",
+      "language": "python",
+      "synced_to": ["src/lib/constants.ts", "src/lib/orbital.ts"]
+    },
+    {
+      "name": "Infrastructure-assistance",
+      "url": "https://github.com/JinnZ2/Infrastructure-assistance",
+      "language": "typescript",
+      "synced_to": ["src/lib/trdap.ts"]
+    }
+  ]
+}

@@ -102,7 +102,7 @@ export default function TRDAPDashboard() {
   );
 }
 
-function MetricCard({ title, value, icon: Icon, trend }: any) {
+function MetricCard({ title, value, icon: Icon, trend }: { title: string; value: string; icon: React.ComponentType<{ className?: string }>; trend: string }) {
   return (
     <Card className="bg-zinc-900 border-zinc-800">
       <CardContent className="p-6">
