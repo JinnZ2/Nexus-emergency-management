@@ -57,21 +57,60 @@ export function stageAction(action: Omit<StagedAction, 'id' | 'timestamp' | 'sta
   return staged;
 }
 
-/** Update the status of a staged action (approve, reject, etc.) */
+/** Update the status of a staged action (approve, reject, etc.)
+ *  Automatically records the decision in the accountability log. */
 export function reviewAction(
   actionId: string,
   status: 'approved' | 'rejected' | 'modified',
   reviewedBy: string,
-  notes: string
+  notes: string,
+  incidentLevel: number = 3
 ): StagedAction | null {
+  if (!notes.trim()) return null; // rationale is required for accountability
+
   const queue = getStagedActions();
   const action = queue.find((a) => a.id === actionId);
   if (!action) return null;
+
+  const proposedAt = action.timestamp;
+  const decidedAt = new Date().toISOString();
+  const responseTimeMs = new Date(decidedAt).getTime() - new Date(proposedAt).getTime();
 
   action.status = status;
   action.reviewedBy = reviewedBy;
   action.reviewNotes = notes;
   saveQueue(queue);
+
+  // Write to the decision accountability log
+  try {
+    const { logDecision } = require('./decision-log');
+    logDecision(
+      {
+        actionId: action.id,
+        aiRole: action.proposedBy,
+        title: action.title,
+        description: action.description,
+        rationale: action.rationale,
+        confidence: action.confidence,
+        priority: action.priority,
+        riskLevel: action.riskLevel,
+        proposedAt,
+      },
+      {
+        decision: status,
+        decidedBy: reviewedBy,
+        rationale: notes,
+        decidedAt,
+        responseTimeMs,
+      },
+      incidentLevel,
+      action.targetDomain,
+      []
+    );
+  } catch {
+    // decision log import may fail in non-browser environments
+  }
+
   return action;
 }
 

@@ -5,3 +5,4 @@ export { INCIDENT_LEVELS, DEVIATION_RULES, getIncidentLevel, getApplicableDeviat
 export { AI_ROLES, HANDOFF_PROTOCOLS, getAIReportsTo, type AIRole, type AIAuthorityLevel, type HandoffProtocol } from './ai-integration';
 export { getStagedActions, stageAction, reviewAction, markExecuted, clearExpired, type StagedAction, type StagedActionStatus, type ActionPriority } from './staging';
 export { TRAINING_MODULES, getModulesForRole, getModulesByCategory, getPrerequisiteChain, type TrainingModule, type TrainingSection } from './training';
+export { getDecisionLog, logDecision, recordOutcome, getDecisionStats, exportDecisionLog, type DecisionRecord, type DecisionOutcome } from './decision-log';
