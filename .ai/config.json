@@ -1,6 +1,6 @@
 {
   "name": "Nexus Infrastructure Assistant",
-  "version": "2.1.0-emergency",
+  "version": "2.2.0-ics",
   "capabilities": {
     "trdap": {
       "description": "Technical Resource Deployment and Analysis Platform",
@@ -22,6 +22,44 @@
       "access": "restricted",
       "requires_auth": true,
       "actions": ["kill_switch", "safe_mode", "cache_flush", "bgp_reroute"]
+    },
+    "ics": {
+      "description": "Incident Command System (NIMS compliant)",
+      "library": "src/lib/ics/",
+      "roles": 14,
+      "ai_partner_roles": 5,
+      "resource_domains": ["communication", "electricity", "water", "labor", "emergency_services"],
+      "incident_levels": 5,
+      "training_modules": 8
+    }
+  },
+  "ai_partners": {
+    "roles": [
+      { "id": "ai-ops-monitor", "title": "AI Operations Monitor", "reports_to": "ops-chief", "authority": "recommend" },
+      { "id": "ai-planning-analyst", "title": "AI Planning Analyst", "reports_to": "planning-chief", "authority": "assist" },
+      { "id": "ai-logistics-optimizer", "title": "AI Logistics Optimizer", "reports_to": "logistics-chief", "authority": "recommend" },
+      { "id": "ai-comms-coordinator", "title": "AI Communications Coordinator", "reports_to": "comms-lead", "authority": "autonomous" },
+      { "id": "ai-safety-sentinel", "title": "AI Safety Sentinel", "reports_to": "safety", "authority": "recommend" }
+    ],
+    "staging_queue": {
+      "storage": "localStorage",
+      "max_entries": 200,
+      "rationale_required": true,
+      "auto_logs_to_decision_trail": true
+    },
+    "decision_log": {
+      "storage": "localStorage",
+      "max_entries": 1000,
+      "exportable": true,
+      "tracks": ["ai_proposal", "human_decision", "outcome"],
+      "rationale_mandatory": true
+    }
+  },
+  "providers": {
+    "failover_chain": ["gemini", "claude", "openai", "offline_runbook"],
+    "circuit_breaker": {
+      "threshold": 5,
+      "reset_timeout_ms": 60000
     }
   },
   "constraints": {
@@ -29,7 +67,9 @@
     "orbital_eccentricity_limit": 0.05,
     "kill_switch_auth": "multi_factor_ai",
     "max_prompt_chars": 4000,
-    "api_keys_server_side_only": true
+    "api_keys_server_side_only": true,
+    "ai_confidence_escalation_threshold": 60,
+    "life_safety_always_human": true
   },
   "connected_repos": [
     {
