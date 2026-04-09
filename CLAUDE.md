@@ -28,9 +28,18 @@ server/             # Express API proxy (keeps API keys server-side)
 ## Critical Rules
 
 1. **NEVER expose API keys in client-side code.** All AI/LLM calls route through `server/api.ts`. The Vite config must NOT use `define` to embed secrets.
-2. **Emergency actions require confirmation.** Any action with `requiresAuth: true` must prompt before execution.
+2. **Emergency actions require confirmation.** Any action with `requiresAuth: true` must prompt via `ConfirmDialog`. High-risk actions require typed confirmation ("CONFIRM").
 3. **Physics constants live in `src/lib/constants.ts`.** Ported from JinnZ2/orbital-phycom - keep in sync.
 4. **All imports use `@/` alias** which resolves to `src/`. All source files must live under `src/`.
+
+## Edge-Case Emergency Systems
+
+- **Error Boundary** (`src/components/ErrorBoundary.tsx`): Wraps the entire app in `main.tsx`. On crash, shows fallback UI explaining that backend services are still operational and provides a reload button.
+- **Confirmation Dialog** (`src/components/ConfirmDialog.tsx`): Modal with risk-tier styling. High-risk actions require typing "CONFIRM". Wired into `EmergencyManagement.tsx`.
+- **Offline Runbook** (`src/lib/runbook.ts`): 5 pre-computed emergency procedures with triggers, step-by-step instructions, rollback plans, and impact estimates. Works without network/API.
+- **Circuit Breaker** (`server/api.ts`): Opens after 5 consecutive Gemini failures, returns 503 with "use runbook" message. Auto-resets after 60s with a half-open probe.
+- **Audit Log** (`src/lib/audit.ts`): Persists to localStorage, survives reloads, capped at 500 entries. Live display in Emergency Management panel.
+- **Health Check**: `GET /api/v1/health` returns uptime, Gemini config status, and circuit breaker state.
 
 ## Development
 
