@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { LayoutDashboard, Orbit, MessageSquare, Settings, Activity, ShieldAlert, Code } from 'lucide-react';
+import { LayoutDashboard, Orbit, MessageSquare, Settings, Activity, ShieldAlert, Code, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface SidebarProps {
@@ -13,6 +13,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
     { id: 'trdap', label: 'TRDAP Analysis', icon: LayoutDashboard },
     { id: 'orbital', label: 'Orbital Monitoring', icon: Orbit },
     { id: 'emergency', label: 'Emergency Mgmt', icon: ShieldAlert },
+    { id: 'ics', label: 'ICS Command', icon: Shield },
     { id: 'protocol', label: 'Agent Protocol', icon: Code },
     { id: 'assistant', label: 'AI Assistant', icon: MessageSquare },
   ];

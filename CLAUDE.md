@@ -32,14 +32,27 @@ server/             # Express API proxy (keeps API keys server-side)
 3. **Physics constants live in `src/lib/constants.ts`.** Ported from JinnZ2/orbital-phycom - keep in sync.
 4. **All imports use `@/` alias** which resolves to `src/`. All source files must live under `src/`.
 
+## AI Provider Failover
+
+The server (`server/api.ts`) supports multiple AI providers with automatic failover:
+
+1. **Gemini** (primary) - `GEMINI_API_KEY`
+2. **Claude / Anthropic** (failover) - `ANTHROPIC_API_KEY`
+3. **OpenAI** (failover) - `OPENAI_API_KEY`
+4. **Offline Runbook** (last resort) - keyword-matched emergency procedures, zero network dependency
+
+Each provider has its own circuit breaker. If a provider fails 5 times consecutively, it's skipped for 60s while the next provider in the chain takes over. The client auto-detects provider transitions and displays which provider is active.
+
+Configure one or more API keys in `.env.local`. Only providers with configured keys are active.
+
 ## Edge-Case Emergency Systems
 
 - **Error Boundary** (`src/components/ErrorBoundary.tsx`): Wraps the entire app in `main.tsx`. On crash, shows fallback UI explaining that backend services are still operational and provides a reload button.
 - **Confirmation Dialog** (`src/components/ConfirmDialog.tsx`): Modal with risk-tier styling. High-risk actions require typing "CONFIRM". Wired into `EmergencyManagement.tsx`.
-- **Offline Runbook** (`src/lib/runbook.ts`): 5 pre-computed emergency procedures with triggers, step-by-step instructions, rollback plans, and impact estimates. Works without network/API.
-- **Circuit Breaker** (`server/api.ts`): Opens after 5 consecutive Gemini failures, returns 503 with "use runbook" message. Auto-resets after 60s with a half-open probe.
+- **Offline Runbook** (`src/lib/runbook.ts`): 5 pre-computed emergency procedures with triggers, step-by-step instructions, rollback plans, and impact estimates. Works without network/API. Also used as client-side AI fallback when all providers are down.
+- **Circuit Breaker** (`server/api.ts`): Per-provider circuit breakers. Open after 5 consecutive failures, auto-reset after 60s with half-open probe.
 - **Audit Log** (`src/lib/audit.ts`): Persists to localStorage, survives reloads, capped at 500 entries. Live display in Emergency Management panel.
-- **Health Check**: `GET /api/v1/health` returns uptime, Gemini config status, and circuit breaker state.
+- **Health Check**: `GET /api/v1/health` returns uptime, per-provider status (configured + circuit state), and active provider list.
 
 ## Development
 
