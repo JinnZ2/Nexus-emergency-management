@@ -84,7 +84,9 @@ class EpistemicPolicy {
         name: m['name'] ?? 'Unnamed',
         author: o.authorKey ?? o.pseudonym,
         decayBase: (m['decay_base'] as num?)?.toDouble() ?? 0.8,
-        floorWeight: (m['floor_weight'] as num?)?.toDouble() ?? 0.25,
+        // Clamp to a safe minimum — a proposal with floorWeight 0 would silently
+        // break the "strangers are heard, just weighted less" guarantee.
+        floorWeight: ((m['floor_weight'] as num?)?.toDouble() ?? 0.25).clamp(0.01, 1.0),
         adoptionThreshold:
             (m['adoption_threshold'] as num?)?.toDouble() ?? 0.6,
       );
@@ -177,19 +179,20 @@ class PolicyResolver {
   }
 }
 
-/// Build a policy PROPOSAL observation (content; host signs + stores + floods
-/// via gossip.report-style path). Parameters are the knobs being proposed.
-Map<String, dynamic> buildPolicyProposalContent({
+/// Build the `inference` string for a policy PROPOSAL observation.
+/// Returns pre-encoded JSON so the caller can pass it directly to
+/// gossip.report(inference: buildPolicyProposalContent(...)) without a
+/// separate jsonEncode step (which was easy to forget).
+String buildPolicyProposalContent({
   required String name,
   required double decayBase,
   required double floorWeight,
   required double adoptionThreshold,
 }) {
-  // Returned as the `inference` JSON the proposal observation carries.
-  return {
+  return jsonEncode({
     'name': name,
     'decay_base': decayBase,
-    'floor_weight': floorWeight,
+    'floor_weight': floorWeight.clamp(0.01, 1.0), // enforce floor here too
     'adoption_threshold': adoptionThreshold,
-  };
+  });
 }

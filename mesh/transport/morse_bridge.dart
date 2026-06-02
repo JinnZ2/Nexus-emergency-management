@@ -72,6 +72,19 @@ class MorseBridge implements MeshTransport {
   /// the Meshtastic sendLine.
   final Future<void> Function(String morse) emitMorse;
 
+  /// WIRING POINT. Set this so detected distress signals reach GossipService
+  /// as properly signed local reports. The host wires it like:
+  ///
+  ///   morse.onDistress = (code, lat, lon, source) => gossip.report(
+  ///     property: 'distress', value: code, lat: lat, lon: lon,
+  ///     vantageType: 'direct', vantageDescription: 'morse:$source',
+  ///   );
+  ///
+  /// Do NOT pass MorseBridge to gossip.init() — its raw stream emits unsigned
+  /// observations with pseudonym 'unknown', which bypass the identity path.
+  /// This callback is the correct wiring; gossip.report() handles signing.
+  void Function(String code, double lat, double lon, String source)? onDistress;
+
   MorseBridge({
     required this.currentLat,
     required this.currentLon,
@@ -134,12 +147,26 @@ class MorseBridge implements MeshTransport {
     final upper = code.toUpperCase().replaceAll(' ', '');
     if (!priorityCodes.containsKey(upper)) return; // only recognized codes
 
+    final lat = currentLat();
+    final lon = currentLon();
+
+    // Preferred path: fire the callback so the host routes through gossip.report(),
+    // which handles signing and chaining. The raw stream is a fallback for callers
+    // that haven't wired onDistress.
+    if (onDistress != null) {
+      onDistress!(upper, lat, lon, source);
+      return;
+    }
+
+    // Fallback: emit unsigned observation on the raw stream. The host is
+    // responsible for signing before storage — this is intentionally awkward
+    // to discourage; set onDistress instead.
     final obs = Observation(
-      previousId: 'genesis', // host/gossip will rechain to lastLocalId on author
-      pseudonym: 'unknown', // host overwrites with local identity before signing
+      previousId: 'genesis',
+      pseudonym: 'unknown',
       timestamp: DateTime.now().toUtc(),
-      lat: currentLat(),
-      lon: currentLon(),
+      lat: lat,
+      lon: lon,
       property: 'distress',
       value: upper,
       vantageType: 'direct',

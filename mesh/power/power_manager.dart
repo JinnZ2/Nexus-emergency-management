@@ -72,6 +72,7 @@ class PowerManager {
   Stream<MeshMode> get onModeChanged => _modeChanges.stream;
 
   DateTime _lastMovement = DateTime.now();
+  double? _lastKnownBattery; // cached so timer-fired evaluations remember battery state
   Timer? _evalTimer; // held so it can be cancelled — bug #2 fix
 
   PowerManager({
@@ -102,16 +103,17 @@ class PowerManager {
   void update(PowerContext ctx) => _evaluate(ctx);
 
   void _evaluate(PowerContext? ctx) {
-    if (ctx != null && ctx.moving) {
-      _lastMovement = DateTime.now();
+    if (ctx != null) {
+      if (ctx.moving) _lastMovement = DateTime.now();
+      if (ctx.batteryLevel != null) _lastKnownBattery = ctx.batteryLevel;
     }
 
     // Priority order: human override > low battery > stationary > normal.
     MeshMode next;
     if (_userOverride != null) {
       next = _userOverride!;
-    } else if (ctx?.batteryLevel != null &&
-        ctx!.batteryLevel! < lowBatteryThreshold) {
+    } else if (_lastKnownBattery != null &&
+        _lastKnownBattery! < lowBatteryThreshold) {
       next = MeshMode.lowPower;
     } else if (DateTime.now().difference(_lastMovement) >= stationaryAfter) {
       next = MeshMode.stationary;
@@ -138,7 +140,7 @@ class PowerManager {
     switch (mode) {
       case MeshMode.crisis:
         return const DutyCycle(
-          scanWindow: Duration(seconds: 0), // 0 = continuous (host interprets)
+          scanWindow: Duration.zero, // zero = continuous (host interprets)
           cyclePeriod: Duration.zero,
           continuous: true,
           advertise: true,

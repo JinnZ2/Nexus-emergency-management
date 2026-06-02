@@ -101,6 +101,7 @@ class ManualQrTransport implements MeshTransport {
   /// parsing fails OR the recomputed id won't match the embedded id — both
   /// caught here, both result in a clean drop, never a corrupted store.
   void onCodeScanned(String raw) {
+    if (!_running) return;
     try {
       final map = jsonDecode(raw) as Map<String, dynamic>;
       final embeddedId = map['id'] as String?;
