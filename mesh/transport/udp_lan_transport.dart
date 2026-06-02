@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import '../models/observation.dart';
-import 'mesh_transport.dart';
+import '../gossip/mesh_transport.dart';
 
 /// UDP / LAN MULTICAST TRANSPORT — observation-class, flood-local.
 ///

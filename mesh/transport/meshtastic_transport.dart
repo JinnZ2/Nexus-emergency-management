@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import '../models/observation.dart';
-import 'mesh_transport.dart';
+import '../gossip/mesh_transport.dart';
 
 /// MESHTASTIC TRANSPORT — observation-class, the long-range radio tier.
 ///

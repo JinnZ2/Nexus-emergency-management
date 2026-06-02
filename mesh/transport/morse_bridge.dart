@@ -1,6 +1,6 @@
 import 'dart:async';
 import '../models/observation.dart';
-import 'mesh_transport.dart';
+import '../gossip/mesh_transport.dart';
 
 /// MORSE BRIDGE — the transport that breaks the transport mold on purpose.
 ///

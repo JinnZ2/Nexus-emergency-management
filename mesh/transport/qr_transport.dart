@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import '../models/observation.dart';
-import 'mesh_transport.dart';
+import '../gossip/mesh_transport.dart';
 
 /// QR / MANUAL TRANSPORT — the deepest fallback in the observation class.
 /// Works when every radio is dead, including Meshtastic. The human is the

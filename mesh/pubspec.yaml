@@ -1,0 +1,42 @@
+name: sovereign_mesh
+description: >-
+  A decentralized, human-sovereign emergency coordination mesh. Lets a community
+  self-organize after a disaster — on phones, a Raspberry Pi, whatever they have
+  — with no server, no admin, no central authority, until outside help arrives.
+version: 0.1.0
+publish_to: none
+
+# CC0 1.0 Universal — public domain. No rights reserved.
+
+environment:
+  sdk: '>=3.1.0 <4.0.0'
+
+dependencies:
+  # Content-id hashing (Observation.id) and key fingerprints.
+  crypto: ^3.0.3
+
+  # Ed25519 keygen / sign / verify — the invisible identity layer. Verify the
+  # exact current version at pub.dev before building; this is the known-good
+  # family at time of writing.
+  cryptography: ^2.7.0
+
+  # SQLite for the always-on node (Pi / desktop). The mobile app can instead
+  # back ObservationStore with sqflite; this dependency is for the FFI path.
+  sqflite_common_ffi: ^2.3.0
+  sqlite3: ^2.4.0
+
+dev_dependencies:
+  lints: ^4.0.0
+  test: ^1.25.0
+
+# NOTE ON TRANSPORT DEPENDENCIES (deliberately NOT listed here):
+# The four transports take their I/O via injected callbacks rather than hard
+# dependencies, so this core package stays buildable anywhere. The HOST app
+# adds the platform packages it actually needs:
+#   - QR transport      -> a qr render + camera-scan package (UI side)
+#   - UDP transport     -> none (dart:io only)
+#   - Meshtastic        -> the host wires sendLine/onRadioLine to the radio
+#                          (Meshtastic Python API over a port, or serial)
+#   - Morse bridge      -> the host wires emitMorse to GPIO/LED/buzzer/etc.
+# Keeping them out of core means a phone build doesn't drag in Pi-only GPIO
+# libraries and vice versa.

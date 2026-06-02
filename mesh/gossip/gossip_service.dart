@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import '../models/observation.dart';
-import '../storage/observation_store.dart';
+import '../store/observation_store.dart';
 import '../identity/identity.dart';
 import '../identity/trust_graph.dart';
 import 'mesh_transport.dart';
