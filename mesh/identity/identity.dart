@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:cryptography/cryptography.dart';
 import 'package:crypto/crypto.dart' show sha256;
 import '../models/observation.dart';
@@ -60,7 +59,7 @@ class Identity {
   /// Export the 32-byte private seed for the caller to persist securely.
   /// This is the ONLY path private material leaves this object, and it goes to
   /// local secure storage, never to a transport.
-  Future<List<int>> exportSeed() async => await _keyPair.extractPrivateKeyBytes();
+  Future<List<int>> exportSeed() => _keyPair.extractPrivateKeyBytes();
 
   /// Raw public key bytes — published with vouches/observations so peers can
   /// verify. Public by definition; safe to share.

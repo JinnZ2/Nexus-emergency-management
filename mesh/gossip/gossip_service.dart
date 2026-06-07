@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import '../models/observation.dart';
-import '../storage/observation_store.dart';
+import '../store/observation_store.dart';
 import '../identity/identity.dart';
-import '../identity/trust_graph.dart';
+import '../identity/trust_graph.dart' show TrustGraph, kVouchProperty;
 import 'mesh_transport.dart';
 
 /// GOSSIP — the keystone. Where store + identity + trust first run together,
@@ -151,8 +151,11 @@ class GossipService {
     var anyNew = false;
     for (final incoming in batch) {
       // 1. STAMP LOCAL TRANSIT — discard wire transit claims.
-      final isFromElsewhere = incoming.authorKey != identity.fingerprint &&
-          incoming.pseudonym != identity.pseudonym;
+      // Prefer key comparison (unforgeable). Fall back to pseudonym only for
+      // keyless observations where neither side has a key.
+      final isFromElsewhere = incoming.authorKey != null
+          ? incoming.authorKey != identity.fingerprint
+          : incoming.pseudonym != identity.pseudonym;
       final localView = incoming.withLocalTransit(
         isCarried: isFromElsewhere,
         originPseudonym: incoming.originPseudonym ?? incoming.pseudonym,
@@ -166,7 +169,7 @@ class GossipService {
       );
 
       // 2. LEARN KEYS if this is a vouch carrying a pubkey.
-      if (localView.property == 'vouch') {
+      if (localView.property == kVouchProperty) {
         _learnVoucherKey(localView);
       }
       // a signed non-vouch observation may also be the first time we see this
@@ -212,6 +215,7 @@ class GossipService {
     for (final t in _transports) {
       if (t == exclude) continue;
       if (!t.isRunning) continue;
+      if (!t.canSend) continue; // honour the transport contract; no silent no-ops
       try {
         await t.sendObservations([o]);
       } catch (_) {

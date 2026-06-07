@@ -25,55 +25,15 @@ import '../models/observation.dart';
 
 const String kVouchProperty = 'vouch';
 
-/// Build a vouch as a normal Observation so it propagates on existing rails.
-///
-///   voucherKey   - pubkey fingerprint of the person doing the vouching
-///   vouchedKey   - pubkey fingerprint being vouched for
-///   voucherDepth - the voucher's OWN distance from an original organizer
-///                  (0 if the voucher is an original/preplanned member).
-///                  The new vouch therefore certifies at depth voucherDepth+1.
-///
-/// Human action behind this call: "I know this person." Nothing more.
-Observation buildVouch({
-  required String voucherKey,
-  required String voucherPseudonym,
-  required String vouchedKey,
-  required int voucherDepth,
-  required String previousId,
-  required double lat,
-  required double lon,
-  String? signature,
-}) {
-  return Observation(
-    previousId: previousId,
-    pseudonym: voucherPseudonym,
-    timestamp: DateTime.now().toUtc(),
-    lat: lat,
-    lon: lon,
-    property: kVouchProperty,
-    // value encodes who is vouched and at what depth this vouch certifies
-    value: jsonEncode({
-      'vouched_key': vouchedKey,
-      'depth': voucherDepth + 1,
-    }),
-    vantageType: 'direct',
-    inference: 'I know this person.',
-    authorKey: voucherKey,
-    signature: signature,
-  );
-}
-
 /// A single vouch edge, parsed out of a vouch-observation.
 class VouchEdge {
   final String voucherKey;
   final String vouchedKey;
-  final int depth; // distance from an original organizer (1 = vouched by an original)
   final bool signed; // was the vouch itself signed by the voucher?
 
   const VouchEdge({
     required this.voucherKey,
     required this.vouchedKey,
-    required this.depth,
     required this.signed,
   });
 
@@ -82,10 +42,11 @@ class VouchEdge {
     if (obs.authorKey == null) return null; // an unsigned/keyless vouch is meaningless
     try {
       final m = jsonDecode(obs.value);
+      final vouchedKey = m['vouched_key'];
+      if (vouchedKey == null) return null;
       return VouchEdge(
         voucherKey: obs.authorKey!,
-        vouchedKey: m['vouched_key'],
-        depth: m['depth'] ?? 1,
+        vouchedKey: vouchedKey,
         signed: obs.isSigned,
       );
     } catch (_) {
