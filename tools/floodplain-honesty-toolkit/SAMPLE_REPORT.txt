@@ -1,0 +1,80 @@
+==============================================================================
+0.2% ANNUAL-CHANCE ('500-YEAR') FLOODPLAIN HONESTY REPORT
+==============================================================================
+Region: Fictional Example County — demonstration only
+Source Type: FEMA_EFFECTIVE
+Confidence: EFFECTIVE_FEMA_SCREENING
+Readiness Score: 100.0/100
+Screening Map Publication Gate: OPEN
+Regulatory Use Allowed by This Toolkit: NO
+
+REQUIRED MAP LABEL: OPERATOR-VERIFIED EFFECTIVE FEMA SOURCE — 0.2% AEP SCREENING ONLY
+
+The operator documented an effective FEMA source with an explicit 0.2% annual-chance boundary.
+
+OPERATOR-DOCUMENTED SOURCE AND REVIEW METADATA
+------------------------------------------------------------------------------
+Source Name: Illustrative NFHL record — not an actual FEMA product identifier
+Source Identifier: FICTIONAL-NFHL-DEMO-0001
+Source URL: https://www.fema.gov/flood-maps/national-flood-hazard-layer
+Source Effective/Study Date: 2025-01-01
+Source Retrieved Date: 2026-09-06
+Assessment Date: 2026-09-06
+Authority Verified By: Fictional GIS Reviewer — demonstration only
+Authority Verification Status: OPERATOR_DOCUMENTED_NOT_INDEPENDENTLY_AUTHENTICATED
+Coverage Evidence: Fictional NFHL Availability review record — demonstration only
+Horizontal CRS Known: YES
+Vertical Datum Known: YES
+Changed Conditions Reviewed: YES
+Changed-Conditions Review Date: 2026-09-06
+Changed-Conditions Summary: Fictional demonstration review; no real-world conditions were evaluated.
+
+PROBABILITY CONTEXT
+------------------------------------------------------------------------------
+Annual exceedance probability: 0.2% in each year
+Illustrative 30-year probability: 5.83%
+Assumption: constant annual probability and independent years; actual conditions may change.
+
+SCORE BREAKDOWN
+------------------------------------------------------------------------------
+Source Authority                             25.0
+Explicit 0 2 Percent Boundary                20.0
+Area Of Interest Coverage                    15.0
+Spatial And Source Metadata                  15.0
+Calibration Review And Uncertainty           15.0
+Changed Conditions Review                    10.0
+
+HAZARD SCOPE
+------------------------------------------------------------------------------
+Riverine                                    INCLUDED
+Coastal                                     NOT_APPLICABLE
+Pluvial                                     EXCLUDED
+Levee                                       UNKNOWN
+Dam Failure                                 EXCLUDED
+
+WARNINGS
+------------------------------------------------------------------------------
+! The term '500-year flood' does not mean one flood every 500 years; it means a 0.2% chance of exceedance in each year.
+! This toolkit cannot determine insurance requirements, permits, code compliance, or parcel-level flood status.
+! Mapped boundaries do not guarantee safety outside the line and do not replace an elevation certificate or site-specific study.
+! Source authority and coverage evidence are operator-documented inputs; this toolkit does not authenticate FEMA or local records.
+! Future conditions may differ even after a changed-conditions review; repeat the review before reuse.
+! Pluvial flooding is explicitly excluded from this assessment.
+! Coverage of levee flooding is unknown.
+! Dam Failure flooding is explicitly excluded from this assessment.
+
+RECOMMENDATIONS
+------------------------------------------------------------------------------
+> Confirm the effective Flood Insurance Rate Map and Flood Insurance Study with the local floodplain administrator.
+> Preserve source dates, coordinate reference system, vertical datum, and official metadata with every exported map.
+> Show the 1% annual-chance Special Flood Hazard Area separately; do not confuse it with the 0.2% annual-chance extent.
+
+NOTES
+------------------------------------------------------------------------------
+- FICTIONAL DEMONSTRATION INPUT — DO NOT USE THIS REPORT FOR MAPPING OR DECISIONS.
+- Replace every example value with source metadata for the actual area of interest.
+- Do not infer low risk from areas where no effective flood layer is available.
+
+==============================================================================
+END OF REPORT
+==============================================================================

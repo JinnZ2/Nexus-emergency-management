@@ -1,0 +1,36 @@
+{
+  "region_name": "Fictional Example County — demonstration only",
+  "source_type": "FEMA_EFFECTIVE",
+  "source_name": "Illustrative NFHL record — not an actual FEMA product identifier",
+  "source_url": "https://www.fema.gov/flood-maps/national-flood-hazard-layer",
+  "source_identifier": "FICTIONAL-NFHL-DEMO-0001",
+  "source_authority_verified_by": "Fictional GIS Reviewer — demonstration only",
+  "coverage_evidence": "Fictional NFHL Availability review record — demonstration only",
+  "source_effective_date": "2025-01-01",
+  "source_retrieved_date": "2026-09-06",
+  "assessment_date": "2026-09-06",
+  "has_0_2_percent_boundary": true,
+  "has_1_percent_boundary": true,
+  "covers_entire_aoi": true,
+  "metadata_complete": true,
+  "horizontal_crs_known": true,
+  "vertical_datum_known": true,
+  "calibration_documented": true,
+  "independent_review_documented": true,
+  "uncertainty_documented": true,
+  "changed_conditions_reviewed": true,
+  "changed_conditions_review_date": "2026-09-06",
+  "changed_conditions_summary": "Fictional demonstration review; no real-world conditions were evaluated.",
+  "hazard_scope": {
+    "riverine": "included",
+    "coastal": "not_applicable",
+    "pluvial": "excluded",
+    "levee": "unknown",
+    "dam_failure": "excluded"
+  },
+  "notes": [
+    "FICTIONAL DEMONSTRATION INPUT — DO NOT USE THIS REPORT FOR MAPPING OR DECISIONS.",
+    "Replace every example value with source metadata for the actual area of interest.",
+    "Do not infer low risk from areas where no effective flood layer is available."
+  ]
+}
