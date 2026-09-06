@@ -1,0 +1,23 @@
+flowchart TD
+    A[Define area of interest and emergency-planning purpose] --> B{Authoritative source identified?}
+    B -- No --> R[Write DATA GAP report]
+    B -- Yes --> C[Load FEMA Flood Hazard Zones or documented local study]
+    C --> D{Coverage verified for entire area?}
+    D -- No --> E[Create NO DATA mask and record partial coverage]
+    D -- Yes --> F[Record complete coverage]
+    E --> G{Explicit 0.2% annual-chance subtype present?}
+    F --> G
+    G -- No --> R
+    G -- Yes --> H[Verify dates, URL, CRS, datum, and source metadata]
+    I[Hazard scope: riverine, coastal, pluvial, levee, dam failure] --> J[Honesty Engine]
+    K[Changed conditions, calibration, uncertainty, independent review] --> J
+    H --> J
+    J --> L{Screening publication gate}
+    L -- Closed --> M[Write honesty report; produce no distributable polygon]
+    L -- Open --> N[Extract explicit 0.2% features]
+    N --> O[Clip to area of interest]
+    O --> P[Embed mandatory MAP_LABEL]
+    P --> Q[Export screening layer plus honesty report and no-data mask]
+    Q --> S[Independent review and comparison with effective FEMA products]
+    S --> T[Emergency-management screening product]
+    T --> U[Not insurance, permitting, code, lending, or parcel determination]

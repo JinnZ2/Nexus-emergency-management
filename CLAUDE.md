@@ -24,6 +24,7 @@ src/
   lib/ics/          # ICS command chain, protocols, resources, AI integration
 server/             # Express API proxy (keeps API keys server-side)
 .ai/                # AI agent configuration, security policy, protocol docs
+tools/              # Standalone honesty-first hazard mapping toolkits
 ```
 
 ## Critical Rules
@@ -32,7 +33,8 @@ server/             # Express API proxy (keeps API keys server-side)
 2. **Emergency actions require confirmation.** Any action with `requiresAuth: true` must prompt via `ConfirmDialog`. High-risk actions require typed confirmation ("CONFIRM").
 3. **AI decisions require documented rationale.** Every approve/reject of an AI proposal must include written reasoning. Blank rationale is rejected. All decisions are logged in `decision-log.ts`.
 4. **Physics constants live in `src/lib/constants.ts`.** Ported from JinnZ2/orbital-phycom - keep in sync.
-5. **All imports use `@/` alias** which resolves to `src/`. All source files must live under `src/`.
+5. **Frontend imports use the `@/` alias** which resolves to `src/`. All React and TypeScript application source files must live under `src/`; standalone hazard tooling lives under `tools/`.
+6. **Hazard screening fails closed.** The landslide and floodplain tools must preserve required warnings, distinguish no data from low risk, and never make parcel-level or regulatory determinations.
 
 ## AI Provider Failover
 
@@ -96,3 +98,10 @@ The Vite dev server proxies `/api/*` requests to the Express server on port 3001
 ## Testing
 
 Run `npm run lint` for TypeScript type checking. The project relies on TypeScript strict compilation for compile-time safety.
+
+Run the standalone hazard-toolkit regression tests with:
+
+```bash
+python3 -m unittest discover -s tools/landslide-honesty-toolkit/tests -p 'test_*.py'
+python3 -m unittest discover -s tools/floodplain-honesty-toolkit/tests -p 'test_*.py'
+```

@@ -4,7 +4,7 @@ A unified infrastructure monitoring and emergency response platform combining **
 
 ## What It Does
 
-Nexus provides a single pane of glass for managing complex infrastructure through seven integrated modules:
+Nexus provides a single pane of glass for managing complex infrastructure through eight integrated modules:
 
 | Module | Description |
 |--------|-------------|
@@ -15,6 +15,7 @@ Nexus provides a single pane of glass for managing complex infrastructure throug
 | **Agent Protocol** | Machine-readable JSON-LD manifest for AI-to-infrastructure interaction. Defines protocols, endpoints, and safety constraints. |
 | **AI Assistant** | Multi-provider AI assistant (Gemini -> Claude -> OpenAI -> offline runbook) with automatic failover, per-provider circuit breakers, and provider transition announcements. |
 | **Landslide Honesty Toolkit** | Python and QGIS tools for data-availability assessment and honesty-first landslide susceptibility mapping. Unvalidated outputs are explicitly labeled and fail closed by default. |
+| **Floodplain Honesty Toolkit** | Python and QGIS tools for traceable 0.2% annual-chance flood screening. Missing provenance, coverage, metadata, changed-condition review, or qualified technical review closes the publication gate. |
 
 ## Architecture
 
@@ -44,10 +45,10 @@ ICS Library (src/lib/ics/)         Data Libraries (src/lib/)
 | training.ts   (8 modules)  |
 +----------------------------+
 
-Hazard Mapping Tools (tools/landslide-honesty-toolkit/)
-+------------------------------------------------------+
-| Honesty Engine | QGIS algorithm | Community guides  |
-+------------------------------------------------------+
+Hazard Mapping Tools (tools/)
++---------------------------------------------------------+
+| Landslide Honesty Toolkit | Floodplain Honesty Toolkit |
++---------------------------------------------------------+
 ```
 
 ## Getting Started
@@ -104,6 +105,21 @@ python3 -m unittest discover \
 
 > **Safety boundary:** The toolkit produces susceptibility screening information, not site-specific hazard determinations. Keep all `UNVALIDATED` labels intact and obtain licensed geotechnical review before construction or siting decisions.
 
+## Floodplain Honesty Toolkit
+
+The [Floodplain Honesty Toolkit](tools/floodplain-honesty-toolkit/) constructs a traceable emergency-management screening layer for the **0.2% annual-chance flood area**, commonly called the 500-year floodplain. It distinguishes that area from the 1% annual-chance Special Flood Hazard Area, records operator-verified source and coverage evidence, and refuses to publish incomplete or unreviewed boundaries. The toolkit preserves who verified the source but does not independently authenticate operator-entered records.
+
+Run the example assessment from the repository root:
+
+```bash
+python3 tools/floodplain-honesty-toolkit/floodplain_honesty_engine.py \
+  --input tools/floodplain-honesty-toolkit/assessment_input.example.json \
+  --json-output floodplain-report.json \
+  --text-output floodplain-report.txt
+```
+
+> **Safety boundary:** A screening gate marked open is not a regulatory approval. The toolkit never makes insurance, lending, permitting, code, elevation-certificate, or parcel-level determinations, and areas outside a mapped boundary are not described as having no flood risk.
+
 ## Project Structure
 
 ```
@@ -111,7 +127,8 @@ python3 -m unittest discover \
 server/
   api.ts                    # Express proxy — multi-provider failover + circuit breakers
 tools/
-  landslide-honesty-toolkit/ # Python/QGIS honesty-first hazard mapping toolkit
+  landslide-honesty-toolkit/  # Landslide data-readiness and susceptibility tools
+  floodplain-honesty-toolkit/ # 0.2% annual-chance flood screening tools
 src/
   components/
     ui/                     # shadcn/ui primitives
@@ -192,7 +209,7 @@ AI agents are integrated as first-class ICS partners, not just tools:
 - **Motion** (animations)
 - **Express** (API proxy with multi-provider failover)
 - **Gemini / Claude / OpenAI** (automatic failover chain)
-- **Python 3.9+ / QGIS 3.28+** (landslide data-readiness and susceptibility tools)
+- **Python 3.9+ / QGIS 3.28+** (honesty-first landslide and floodplain mapping tools)
 
 ## License
 

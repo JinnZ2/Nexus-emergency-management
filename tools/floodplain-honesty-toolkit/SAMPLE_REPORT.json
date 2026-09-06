@@ -1,0 +1,65 @@
+{
+  "annual_exceedance_probability_percent": 0.2,
+  "can_publish_screening_map": true,
+  "confidence_level": "EFFECTIVE_FEMA_SCREENING",
+  "hazard_scope": {
+    "coastal": "not_applicable",
+    "dam_failure": "excluded",
+    "levee": "unknown",
+    "pluvial": "excluded",
+    "riverine": "included"
+  },
+  "interpretation": "The operator documented an effective FEMA source with an explicit 0.2% annual-chance boundary.",
+  "notes": [
+    "FICTIONAL DEMONSTRATION INPUT \u2014 DO NOT USE THIS REPORT FOR MAPPING OR DECISIONS.",
+    "Replace every example value with source metadata for the actual area of interest.",
+    "Do not infer low risk from areas where no effective flood layer is available."
+  ],
+  "readiness_score": 100.0,
+  "recommendations": [
+    "Confirm the effective Flood Insurance Rate Map and Flood Insurance Study with the local floodplain administrator.",
+    "Preserve source dates, coordinate reference system, vertical datum, and official metadata with every exported map.",
+    "Show the 1% annual-chance Special Flood Hazard Area separately; do not confuse it with the 0.2% annual-chance extent."
+  ],
+  "region_name": "Fictional Example County \u2014 demonstration only",
+  "regulatory_use_allowed": false,
+  "required_map_label": "OPERATOR-VERIFIED EFFECTIVE FEMA SOURCE \u2014 0.2% AEP SCREENING ONLY",
+  "requires_data_gap_mask": false,
+  "score_breakdown": {
+    "area_of_interest_coverage": 15.0,
+    "calibration_review_and_uncertainty": 15.0,
+    "changed_conditions_review": 10.0,
+    "explicit_0_2_percent_boundary": 20.0,
+    "source_authority": 25.0,
+    "spatial_and_source_metadata": 15.0
+  },
+  "source_metadata": {
+    "assessment_date": "2026-09-06",
+    "authority_verification": "OPERATOR_DOCUMENTED_NOT_INDEPENDENTLY_AUTHENTICATED",
+    "authority_verified_by": "Fictional GIS Reviewer \u2014 demonstration only",
+    "changed_conditions_review_date": "2026-09-06",
+    "changed_conditions_reviewed": true,
+    "changed_conditions_summary": "Fictional demonstration review; no real-world conditions were evaluated.",
+    "coverage_evidence": "Fictional NFHL Availability review record \u2014 demonstration only",
+    "effective_date": "2025-01-01",
+    "horizontal_crs_known": true,
+    "identifier": "FICTIONAL-NFHL-DEMO-0001",
+    "metadata_complete": true,
+    "name": "Illustrative NFHL record \u2014 not an actual FEMA product identifier",
+    "retrieved_date": "2026-09-06",
+    "url": "https://www.fema.gov/flood-maps/national-flood-hazard-layer",
+    "vertical_datum_known": true
+  },
+  "source_type": "FEMA_EFFECTIVE",
+  "thirty_year_probability_percent": 5.8292046042449535,
+  "warnings": [
+    "The term '500-year flood' does not mean one flood every 500 years; it means a 0.2% chance of exceedance in each year.",
+    "This toolkit cannot determine insurance requirements, permits, code compliance, or parcel-level flood status.",
+    "Mapped boundaries do not guarantee safety outside the line and do not replace an elevation certificate or site-specific study.",
+    "Source authority and coverage evidence are operator-documented inputs; this toolkit does not authenticate FEMA or local records.",
+    "Future conditions may differ even after a changed-conditions review; repeat the review before reuse.",
+    "Pluvial flooding is explicitly excluded from this assessment.",
+    "Coverage of levee flooding is unknown.",
+    "Dam Failure flooding is explicitly excluded from this assessment."
+  ]
+}
