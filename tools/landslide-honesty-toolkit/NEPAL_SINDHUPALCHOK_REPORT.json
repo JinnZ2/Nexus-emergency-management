@@ -1,0 +1,77 @@
+{
+  "region_name": "Sindhupalchok District, Bagmati Province, Nepal",
+  "country_code": "NP",
+  "bbox": [
+    85.5,
+    27.5,
+    85.9,
+    28.0
+  ],
+  "data_available": {
+    "national_landslide_inventory": true,
+    "global_landslide_inventory": true,
+    "dem_copernicus_30m": true,
+    "slope_derived_from_dem": true,
+    "aspect_derived_from_dem": true,
+    "curvature_derived_from_dem": true,
+    "soils_soilgrids": true,
+    "geology_onegeology": true,
+    "precipitation_chirps": true,
+    "seismic_data_usgs": true,
+    "landcover_esa_worldcover": true,
+    "roads_openstreetmap": true
+  },
+  "data_quality": {
+    "national_landslide_inventory": "low",
+    "global_landslide_inventory": "low",
+    "dem_copernicus_30m": "high",
+    "soils_soilgrids": "medium",
+    "geology_onegeology": "low",
+    "precipitation_chirps": "medium",
+    "seismic_data_usgs": "high",
+    "landcover_esa_worldcover": "high",
+    "roads_openstreetmap": "medium"
+  },
+  "data_source": {
+    "national_landslide_inventory": "ICIMOD / DHM Nepal (limited coverage)",
+    "global_landslide_inventory": "NASA COOLR / UGLC Global Landslide Catalog",
+    "dem_copernicus_30m": "Copernicus DEM 30m (ESA)",
+    "soils_soilgrids": "SoilGrids 250m (ISRIC)",
+    "geology_onegeology": "OneGeology / USGS Global Geologic Map (1:5M)",
+    "precipitation_chirps": "CHIRPS (UC Santa Barbara)",
+    "seismic_data_usgs": "USGS National Seismic Hazard Map",
+    "landcover_esa_worldcover": "ESA WorldCover 10m",
+    "roads_openstreetmap": "OpenStreetMap (variable completeness in remote areas)"
+  },
+  "inventory_score": 20.0,
+  "terrain_score": 80.0,
+  "soil_score": 55.0,
+  "geology_score": 40.0,
+  "trigger_score": 65.0,
+  "overall_score": 44.75,
+  "confidence_level": "UNVALIDATED_LOW",
+  "confidence_reason": "Limited landslide inventory exists (ICIMOD, COOLR, UGLC) but coverage is sparse and uneven. Most remote areas have no documentation.",
+  "can_produce_map": true,
+  "map_reliability_note": "UNVALIDATED \u2014 Map is based on terrain proxies and sparse global inventory. Use for awareness and planning only. NOT for engineering design or siting.",
+  "warnings": [
+    "Nepal has limited systematic landslide inventory. Most events in remote areas go unreported.",
+    "2015 Gorkha earthquake triggered thousands of landslides; many were documented but coverage is uneven.",
+    "SoilGrids 250m resolution is too coarse for steep Himalayan terrain. Local soil variability is extreme.",
+    "Global geology maps are extremely coarse for the Himalaya. Local geological complexity (thrust faults, metamorphic zones) is not captured.",
+    "Nepal has very high seismic hazard. Earthquake-triggered landslides are a major factor not fully captured in terrain-only models.",
+    "UNVALIDATED MAP: Sparse inventory coverage. Many landslide-prone areas have no documented events.",
+    "Himalayan terrain is extremely complex. A 30m DEM and 250m soil data miss critical local variations.",
+    "Monsoon rainfall triggers are highly localized. CHIRPS 5km data cannot capture orographic precipitation at slope scale."
+  ],
+  "recommendations": [
+    "Contact Nepal Department of Mines and Geology for local geological maps.",
+    "Work with local communities to document landslide events (see Community Toolkit).",
+    "Contact ICIMOD for any existing landslide susceptibility studies in your district.",
+    "Use this map as a screening tool only. Site-specific geotechnical assessment is essential."
+  ],
+  "local_contacts": [
+    "Department of Hydrology and Meteorology (DHM), Nepal \u2014 rainfall and some landslide data",
+    "ICIMOD \u2014 regional landslide research and inventory projects",
+    "NSET (National Society for Earthquake Technology) \u2014 community-based hazard data"
+  ]
+}

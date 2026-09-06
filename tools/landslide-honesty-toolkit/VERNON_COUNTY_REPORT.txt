@@ -1,0 +1,67 @@
+======================================================================
+LANDSLIDE SUSCEPTIBILITY — DATA AVAILABILITY & CONFIDENCE REPORT
+======================================================================
+Region: Vernon County, Wisconsin
+State: WI
+Assessment Date: 2026-09-07
+Overall Readiness Score: 47.2/100
+
+----------------------------------------------------------------------
+CONFIDENCE DETERMINATION
+----------------------------------------------------------------------
+Confidence Level: UNVALIDATED_NONE
+Can Produce Map: NO
+
+Reason: No known landslide inventory data for this state/region.
+
+Map Reliability Note: CANNOT PRODUCE RELIABLE MAP — Insufficient data to make any meaningful susceptibility assessment.
+
+----------------------------------------------------------------------
+DATA LAYER AVAILABILITY
+----------------------------------------------------------------------
+  [MISSING  ] local_landslide_inventory           | Quality: unknown    | Source: unknown
+  [MISSING  ] state_landslide_inventory           | Quality: none       | Source: No known state program
+  [AVAILABLE] usgs_national_inventory             | Quality: variable   | Source: USGS National Landslide Inventory (Belair et al. 2024)
+  [AVAILABLE] dem_3dep_10m                        | Quality: high       | Source: USGS 3DEP (10m or better)
+  [MISSING  ] dem_srtm_30m                        | Quality: unknown    | Source: unknown
+  [MISSING  ] dem_srtm_90m                        | Quality: unknown    | Source: unknown
+  [AVAILABLE] soils_ssurgo                        | Quality: high       | Source: USDA NRCS SSURGO
+  [MISSING  ] soils_statsgo                       | Quality: unknown    | Source: unknown
+  [MISSING  ] geology_state                       | Quality: unknown    | Source: unknown
+  [AVAILABLE] geology_usgs_national               | Quality: medium     | Source: USGS National Geologic Map
+  [AVAILABLE] landcover_nlcd                      | Quality: high       | Source: USGS NLCD
+  [MISSING  ] landcover_modis                     | Quality: unknown    | Source: unknown
+  [AVAILABLE] precipitation_data                  | Quality: high       | Source: PRISM Climate Data / NOAA
+  [AVAILABLE] roads_openstreetmap                 | Quality: medium     | Source: OpenStreetMap
+  [AVAILABLE] slope_derived_from_dem              | Quality: unknown    | Source: unknown
+  [AVAILABLE] aspect_derived_from_dem             | Quality: unknown    | Source: unknown
+  [AVAILABLE] curvature_derived_from_dem          | Quality: unknown    | Source: unknown
+
+----------------------------------------------------------------------
+SCORE BREAKDOWN
+----------------------------------------------------------------------
+  Landslide Inventory Score: 5.0/100 (WEIGHT: 40%)
+  Terrain/DEM Score:         85.0/100 (WEIGHT: 20%)
+  Soil Data Score:           75.0/100 (WEIGHT: 15%)
+  Geology Data Score:        60.0/100 (WEIGHT: 15%)
+  Trigger Data Score:        80.0/100 (WEIGHT: 10%)
+
+----------------------------------------------------------------------
+WARNINGS
+----------------------------------------------------------------------
+  ! CRITICAL: WI has no known state landslide inventory program.
+  ! Any susceptibility map produced without local inventory is UNVALIDATED.
+  ! USGS national inventory has sparse coverage in this region — do not rely on it alone.
+  ! CRITICAL DATA GAP: No landslide inventory, limited state geological survey resources.
+
+----------------------------------------------------------------------
+RECOMMENDATIONS
+----------------------------------------------------------------------
+  > Contact your state geological survey to request inventory development.
+  > Consider community-based landslide reporting (see Community Toolkit).
+  > DO NOT use any susceptibility map for this region without professional geotechnical assessment.
+  > Start a community landslide reporting program immediately (see Community Toolkit).
+
+======================================================================
+END OF REPORT
+======================================================================
