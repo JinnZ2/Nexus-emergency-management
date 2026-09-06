@@ -1,0 +1,56 @@
+COMPARISON: VERNON COUNTY, WI vs SINDHUPALCHOK, NEPAL
+======================================================================
+
+Metric                              Vernon County, WI      Sindhupalchok, Nepal
+----------------------------------- ---------------------- ----------------------
+Overall Score                       47.2/100               44.8/100
+Confidence Level                    UNVALIDATED_NONE       UNVALIDATED_LOW
+Can Produce Map                     NO (refused)           YES (unvalidated)
+Inventory Score                     5.0/100               20.0/100
+Terrain/DEM Score                   85.0/100               80.0/100
+Soil Data Score                     75.0/100               55.0/100
+Geology Score                       60.0/100               40.0/100
+Trigger Data Score                  80.0/100               65.0/100
+
+======================================================================
+KEY DIFFERENCES:
+======================================================================
+
+Vernon County, Wisconsin (US — Minimal Inventory State)
+- State has NO landslide inventory program
+- USGS national inventory has sparse coverage
+- Excellent soil data (USDA SSURGO, county-level)
+- Good geology data (USGS state maps)
+- Excellent DEM (USGS 3DEP, 10m)
+- System REFUSED to produce map (score 47.2, UNVALIDATED_NONE)
+- Terrain is moderate Driftless Area ridge-and-valley
+
+Sindhupalchok District, Nepal (Global Path)
+- Some inventory exists (ICIMOD, NASA COOLR, UGLC) but very sparse
+- No comprehensive national inventory
+- Coarse soil data (SoilGrids 250m — too coarse for Himalaya)
+- Very coarse geology (OneGeology 1:5M — misses thrust faults, metamorphic zones)
+- Good DEM (Copernicus, 30m)
+- Additional seismic hazard factor (USGS high seismic hazard)
+- System produced UNVALIDATED map (score 44.8, UNVALIDATED_LOW)
+- Terrain is extreme Himalayan (72% High/Very High susceptibility)
+
+======================================================================
+THE HONESTY ENGINE TREATS BOTH THE SAME:
+======================================================================
+
+1. Both get RED UNVALIDATED warning banners
+2. Both are marked "NOT FOR CONSTRUCTION SITING"
+3. Both require site-specific geotechnical assessment
+4. Both recommend community inventory-building
+5. Both state clearly: "This map shows where landslides MIGHT occur based on terrain. It does NOT mean they HAVE occurred."
+
+The difference in score (47.2 vs 44.8) is less important than the fact that BOTH are below the validation threshold. The engine does not care whether you are in Wisconsin or Nepal — if the inventory is insufficient, the map is unvalidated.
+
+======================================================================
+WHAT THIS PROVES:
+======================================================================
+
+The Honesty Engine works across borders. The Global Path is documented and functional. A community leader in Sindhupalchok can use the same workflow, the same QGIS steps, the same Community Toolkit as a county emergency manager in Wisconsin. The data sources change (Copernicus instead of 3DEP, SoilGrids instead of SSURGO, CHIRPS instead of PRISM) but the honesty check remains the same.
+
+The red banner looks the same in both places. That is the point.

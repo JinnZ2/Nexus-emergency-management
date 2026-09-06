@@ -1,0 +1,76 @@
+======================================================================
+LANDSLIDE SUSCEPTIBILITY — DATA AVAILABILITY & CONFIDENCE REPORT
+GLOBAL PATH | Nepal Assessment
+======================================================================
+Region: Sindhupalchok District, Bagmati Province, Nepal
+Country: NP
+Assessment Date: 2026-09-07
+Overall Readiness Score: 44.8/100
+
+----------------------------------------------------------------------
+CONFIDENCE DETERMINATION
+----------------------------------------------------------------------
+Confidence Level: UNVALIDATED_LOW
+Can Produce Map: YES
+
+Reason: Limited landslide inventory exists (ICIMOD, COOLR, UGLC) but coverage is sparse and uneven. Most remote areas have no documentation.
+
+Map Reliability Note: UNVALIDATED — Map is based on terrain proxies and sparse global inventory. Use for awareness and planning only. NOT for engineering design or siting.
+
+----------------------------------------------------------------------
+DATA LAYER AVAILABILITY (GLOBAL SOURCES)
+----------------------------------------------------------------------
+  [MISSING  ] local_landslide_inventory           | Quality: unknown    | Source: unknown
+  [AVAILABLE] national_landslide_inventory        | Quality: low        | Source: ICIMOD / DHM Nepal (limited coverage)
+  [AVAILABLE] global_landslide_inventory          | Quality: low        | Source: NASA COOLR / UGLC Global Landslide Catalog
+  [AVAILABLE] dem_copernicus_30m                  | Quality: high       | Source: Copernicus DEM 30m (ESA)
+  [MISSING  ] dem_srtm_30m                        | Quality: unknown    | Source: unknown
+  [AVAILABLE] soils_soilgrids                     | Quality: medium     | Source: SoilGrids 250m (ISRIC)
+  [AVAILABLE] geology_onegeology                  | Quality: low        | Source: OneGeology / USGS Global Geologic Map (1:5M)
+  [AVAILABLE] landcover_esa_worldcover            | Quality: high       | Source: ESA WorldCover 10m
+  [AVAILABLE] precipitation_chirps                | Quality: medium     | Source: CHIRPS (UC Santa Barbara)
+  [AVAILABLE] roads_openstreetmap                 | Quality: medium     | Source: OpenStreetMap (variable completeness in remote areas)
+  [AVAILABLE] slope_derived_from_dem              | Quality: unknown    | Source: unknown
+  [AVAILABLE] aspect_derived_from_dem             | Quality: unknown    | Source: unknown
+  [AVAILABLE] curvature_derived_from_dem          | Quality: unknown    | Source: unknown
+  [AVAILABLE] seismic_data_usgs                   | Quality: high       | Source: USGS National Seismic Hazard Map
+
+----------------------------------------------------------------------
+SCORE BREAKDOWN
+----------------------------------------------------------------------
+  Landslide Inventory Score: 20.0/100 (WEIGHT: 40%)
+  Terrain/DEM Score:         80.0/100 (WEIGHT: 20%)
+  Soil Data Score:           55.0/100 (WEIGHT: 15%)
+  Geology Data Score:        40.0/100 (WEIGHT: 15%)
+  Trigger Data Score:        65.0/100 (WEIGHT: 10%)
+
+----------------------------------------------------------------------
+WARNINGS
+----------------------------------------------------------------------
+  ! Nepal has limited systematic landslide inventory. Most events in remote areas go unreported.
+  ! 2015 Gorkha earthquake triggered thousands of landslides; many were documented but coverage is uneven.
+  ! SoilGrids 250m resolution is too coarse for steep Himalayan terrain. Local soil variability is extreme.
+  ! Global geology maps are extremely coarse for the Himalaya. Local geological complexity (thrust faults, metamorphic zones) is not captured.
+  ! Nepal has very high seismic hazard. Earthquake-triggered landslides are a major factor not fully captured in terrain-only models.
+  ! UNVALIDATED MAP: Sparse inventory coverage. Many landslide-prone areas have no documented events.
+  ! Himalayan terrain is extremely complex. A 30m DEM and 250m soil data miss critical local variations.
+  ! Monsoon rainfall triggers are highly localized. CHIRPS 5km data cannot capture orographic precipitation at slope scale.
+
+----------------------------------------------------------------------
+RECOMMENDATIONS
+----------------------------------------------------------------------
+  > Contact Nepal Department of Mines and Geology for local geological maps.
+  > Work with local communities to document landslide events (see Community Toolkit).
+  > Contact ICIMOD for any existing landslide susceptibility studies in your district.
+  > Use this map as a screening tool only. Site-specific geotechnical assessment is essential.
+
+----------------------------------------------------------------------
+LOCAL DATA CONTACTS
+----------------------------------------------------------------------
+  @ Department of Hydrology and Meteorology (DHM), Nepal — rainfall and some landslide data
+  @ ICIMOD — regional landslide research and inventory projects
+  @ NSET (National Society for Earthquake Technology) — community-based hazard data
+
+======================================================================
+END OF REPORT
+======================================================================

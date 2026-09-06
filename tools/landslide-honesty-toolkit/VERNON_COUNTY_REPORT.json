@@ -1,0 +1,67 @@
+{
+  "region_name": "Vernon County, Wisconsin",
+  "state_fips": "WI",
+  "county_fips": null,
+  "bbox": [
+    -91.3,
+    43.2,
+    -90.3,
+    43.6
+  ],
+  "data_available": {
+    "state_landslide_inventory": false,
+    "usgs_national_inventory": true,
+    "dem_3dep_10m": true,
+    "slope_derived_from_dem": true,
+    "aspect_derived_from_dem": true,
+    "curvature_derived_from_dem": true,
+    "soils_ssurgo": true,
+    "geology_usgs_national": true,
+    "precipitation_data": true,
+    "landcover_nlcd": true,
+    "roads_openstreetmap": true
+  },
+  "data_quality": {
+    "state_landslide_inventory": "none",
+    "usgs_national_inventory": "variable",
+    "dem_3dep_10m": "high",
+    "soils_ssurgo": "high",
+    "geology_usgs_national": "medium",
+    "precipitation_data": "high",
+    "landcover_nlcd": "high",
+    "roads_openstreetmap": "medium"
+  },
+  "data_source": {
+    "state_landslide_inventory": "No known state program",
+    "usgs_national_inventory": "USGS National Landslide Inventory (Belair et al. 2024)",
+    "dem_3dep_10m": "USGS 3DEP (10m or better)",
+    "soils_ssurgo": "USDA NRCS SSURGO",
+    "geology_usgs_national": "USGS National Geologic Map",
+    "precipitation_data": "PRISM Climate Data / NOAA",
+    "landcover_nlcd": "USGS NLCD",
+    "roads_openstreetmap": "OpenStreetMap"
+  },
+  "inventory_score": 5.0,
+  "terrain_score": 85.0,
+  "soil_score": 75.0,
+  "geology_score": 60.0,
+  "trigger_score": 80.0,
+  "overall_score": 47.25,
+  "confidence_level": "UNVALIDATED_NONE",
+  "confidence_reason": "No known landslide inventory data for this state/region.",
+  "can_produce_map": false,
+  "map_reliability_note": "CANNOT PRODUCE RELIABLE MAP \u2014 Insufficient data to make any meaningful susceptibility assessment.",
+  "warnings": [
+    "CRITICAL: WI has no known state landslide inventory program.",
+    "Any susceptibility map produced without local inventory is UNVALIDATED.",
+    "USGS national inventory has sparse coverage in this region \u2014 do not rely on it alone.",
+    "CRITICAL DATA GAP: No landslide inventory, limited state geological survey resources."
+  ],
+  "recommendations": [
+    "Contact your state geological survey to request inventory development.",
+    "Consider community-based landslide reporting (see Community Toolkit).",
+    "DO NOT use any susceptibility map for this region without professional geotechnical assessment.",
+    "Start a community landslide reporting program immediately (see Community Toolkit)."
+  ],
+  "local_contacts": []
+}

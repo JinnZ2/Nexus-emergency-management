@@ -14,6 +14,7 @@ Nexus provides a single pane of glass for managing complex infrastructure throug
 | **ICS Command** | Full NIMS/FEMA-compliant Incident Command System: org hierarchy, SOPs for 5 resource domains (comms, power, water, labor, ES) with explicit deviation triggers, resource tracking, escalation matrix, AI partner roles, staging queue, decision log, and training materials. |
 | **Agent Protocol** | Machine-readable JSON-LD manifest for AI-to-infrastructure interaction. Defines protocols, endpoints, and safety constraints. |
 | **AI Assistant** | Multi-provider AI assistant (Gemini -> Claude -> OpenAI -> offline runbook) with automatic failover, per-provider circuit breakers, and provider transition announcements. |
+| **Landslide Honesty Toolkit** | Python and QGIS tools for data-availability assessment and honesty-first landslide susceptibility mapping. Unvalidated outputs are explicitly labeled and fail closed by default. |
 
 ## Architecture
 
@@ -42,6 +43,11 @@ ICS Library (src/lib/ics/)         Data Libraries (src/lib/)
 | decision-log.ts (trail)    |     +----------------------------+
 | training.ts   (8 modules)  |
 +----------------------------+
+
+Hazard Mapping Tools (tools/landslide-honesty-toolkit/)
++------------------------------------------------------+
+| Honesty Engine | QGIS algorithm | Community guides  |
++------------------------------------------------------+
 ```
 
 ## Getting Started
@@ -75,12 +81,37 @@ npm run dev:client
 | `npm run lint` | TypeScript type checking |
 | `npm run clean` | Remove build artifacts |
 
+## Landslide Honesty Toolkit
+
+The self-contained [Landslide Honesty Toolkit](tools/landslide-honesty-toolkit/) assesses whether a region has enough local inventory data to support landslide susceptibility mapping. It includes a standalone Python engine, a QGIS Processing algorithm, historical-imagery setup tooling, community guidance, sample reports, and reference maps.
+
+Run a standalone assessment from the repository root:
+
+```bash
+python3 tools/landslide-honesty-toolkit/landslide_honesty_engine.py \
+  --region "Buncombe County" \
+  --state NC \
+  --output buncombe-assessment.json
+```
+
+Run the toolkit regression tests:
+
+```bash
+python3 -m unittest discover \
+  -s tools/landslide-honesty-toolkit/tests \
+  -p 'test_*.py'
+```
+
+> **Safety boundary:** The toolkit produces susceptibility screening information, not site-specific hazard determinations. Keep all `UNVALIDATED` labels intact and obtain licensed geotechnical review before construction or siting decisions.
+
 ## Project Structure
 
 ```
 .ai/                        # AI agent config, security policy, protocol docs
 server/
   api.ts                    # Express proxy — multi-provider failover + circuit breakers
+tools/
+  landslide-honesty-toolkit/ # Python/QGIS honesty-first hazard mapping toolkit
 src/
   components/
     ui/                     # shadcn/ui primitives
@@ -161,6 +192,7 @@ AI agents are integrated as first-class ICS partners, not just tools:
 - **Motion** (animations)
 - **Express** (API proxy with multi-provider failover)
 - **Gemini / Claude / OpenAI** (automatic failover chain)
+- **Python 3.9+ / QGIS 3.28+** (landslide data-readiness and susceptibility tools)
 
 ## License
 
