@@ -168,7 +168,10 @@ app.get('/api/v1/health', (_req, res) => {
   });
 });
 
-// --- Assistant Endpoint (failover chain) ---
+// --- Assistant Endpoint (enhancement) ---
+// The client has already produced a base-layer result from offline/index.html
+// before calling this. This endpoint only adds to it. A 503 here means "no
+// enhancement", not "no answer".
 app.post('/api/v1/assistant', async (req, res) => {
   const { prompt, context } = req.body;
 
@@ -185,9 +188,9 @@ app.post('/api/v1/assistant', async (req, res) => {
   const active = getActiveProviders();
   if (active.length === 0) {
     res.status(503).json({
-      error: 'No AI providers configured. Set at least one API key (GEMINI_API_KEY, ANTHROPIC_API_KEY, or OPENAI_API_KEY).',
+      error: 'No enhancement providers configured. Set at least one API key (GEMINI_API_KEY, ANTHROPIC_API_KEY, or OPENAI_API_KEY). The base layer result stands.',
       provider: null,
-      fallback: 'offline_runbook',
+      layer: 'base',
     });
     return;
   }
@@ -222,11 +225,12 @@ app.post('/api/v1/assistant', async (req, res) => {
     }
   }
 
-  // All providers failed
+  // All providers failed. Note: under connectivity loss they fail together;
+  // see channels.md. The base layer result the client already has stands.
   res.status(503).json({
-    error: 'All AI providers failed. Use the offline emergency runbook.',
+    error: 'No enhancement provider reachable. The base layer result stands.',
     provider: null,
-    fallback: 'offline_runbook',
+    layer: 'base',
     failoversAttempted: errors.length,
     details: errors,
   });
@@ -236,5 +240,5 @@ const PORT = process.env.API_PORT || 3001;
 app.listen(PORT, () => {
   const active = getActiveProviders();
   console.log(`Nexus API server running on port ${PORT}`);
-  console.log(`Active AI providers: ${active.length > 0 ? active.map(p => p.name).join(' -> ') : 'NONE (configure API keys)'}`);
+  console.log(`Enhancement providers (tried in order, on top of the base layer): ${active.length > 0 ? active.map(p => p.name).join(' -> ') : 'NONE (configure API keys)'}`);
 });

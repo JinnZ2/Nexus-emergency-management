@@ -7,7 +7,7 @@ import { AlertTriangle, Zap, ShieldAlert, Terminal, ArrowRight, Lock, Unlock, Bo
 import { EmergencyAction, Pipeline } from '@/types';
 import { cn } from '@/lib/utils';
 import { logAudit, getAuditLog, formatAuditTime } from '@/lib/audit';
-import { EMERGENCY_RUNBOOK } from '@/lib/runbook';
+import { EMERGENCY_RUNBOOK, RUNBOOK_REVISION, BASE_LAYER_PATH } from '@/lib/runbook';
 import ConfirmDialog from './ConfirmDialog';
 
 const actions: EmergencyAction[] = [
@@ -73,7 +73,7 @@ export default function EmergencyManagement() {
             className="gap-2"
           >
             <BookOpen className="w-4 h-4" />
-            {showRunbook ? 'Hide Runbook' : 'Offline Runbook'}
+            {showRunbook ? 'Hide Runbook' : 'Runbook (base layer)'}
           </Button>
           <Button
             variant={isLocked ? "outline" : "destructive"}
@@ -91,10 +91,15 @@ export default function EmergencyManagement() {
         <Card className="bg-zinc-900 border-zinc-800">
           <CardHeader>
             <CardTitle className="text-zinc-100 text-sm font-medium uppercase tracking-wider opacity-50 italic flex items-center gap-2">
-              <BookOpen className="w-4 h-4" /> Emergency Runbook (Offline)
+              <BookOpen className="w-4 h-4" /> Emergency Runbook (base layer rev {RUNBOOK_REVISION})
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
+            <p className="text-xs text-zinc-500 pb-2">
+              This panel reads the base layer file. The file itself opens with no server, no network, and no build:{' '}
+              <a href={`/${BASE_LAYER_PATH}`} target="_blank" rel="noreferrer" className="text-emerald-500 underline">{BASE_LAYER_PATH}</a>.
+              Keep a copy on the device.
+            </p>
             {EMERGENCY_RUNBOOK.map((entry) => (
               <div key={entry.id} className="border border-zinc-800 rounded-lg overflow-hidden">
                 <button
@@ -158,7 +163,10 @@ export default function EmergencyManagement() {
         {/* Kill Switches */}
         <Card className="lg:col-span-2 bg-zinc-900 border-zinc-800">
           <CardHeader>
-            <CardTitle className="text-zinc-100 text-sm font-medium uppercase tracking-wider opacity-50 italic">Intervention Triggers</CardTitle>
+            <CardTitle className="text-zinc-100 text-sm font-medium uppercase tracking-wider opacity-50 italic flex items-center gap-2">
+              Intervention Triggers
+              <Badge variant="outline" className="text-[10px] normal-case tracking-normal not-italic text-zinc-500 border-zinc-700">connected mode only</Badge>
+            </CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {actions.map((action) => (
@@ -232,6 +240,7 @@ export default function EmergencyManagement() {
         <CardHeader className="pb-2">
           <CardTitle className="text-zinc-500 text-xs font-mono flex items-center gap-2">
             <Terminal className="w-3 h-3" /> SAFETY_AUDIT_LOG
+            <span className="text-zinc-700 normal-case">this browser profile only, no export path here (see INVESTIGATION.md E1)</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="font-mono text-[10px] space-y-1 max-h-40 overflow-y-auto">

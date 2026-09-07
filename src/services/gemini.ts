@@ -1,110 +1,124 @@
-import { EMERGENCY_RUNBOOK, type RunbookEntry } from '@/lib/runbook';
+/**
+ * Assistant service, connected mode.
+ *
+ * Order of operations:
+ *   base layer (runbook keyword match, synchronous, always)
+ *     -> enhancement (any provider via the server proxy), only if a probe
+ *        has said it is reachable, and only as an addition to the base result.
+ *
+ * The base result never waits on the network. If enhancement is unreachable,
+ * nothing retries, nothing times out in front of the operator, and no banner
+ * blocks use. The enhancement request itself has a hard abort so a hung
+ * backhaul cannot hold a pending indicator open forever.
+ *
+ * File name is inherited from the scaffold; see INVESTIGATION.md, E3.
+ */
+import { EMERGENCY_RUNBOOK, RUNBOOK_REVISION, matchRunbookEntries } from '@/lib/runbook';
+
+export type AssistantLayer = 'base' | 'enhancement';
 
 export interface AssistantResponse {
   content: string;
-  provider: string;       // 'gemini' | 'claude' | 'openai' | 'offline_runbook'
-  isOfflineFallback: boolean;
+  provider: string;       // 'base' | 'gemini' | 'claude' | 'openai'
+  layer: AssistantLayer;
 }
 
-/** Try the server-side AI provider chain. If the server is unreachable, fall back to local runbook matching. */
-export async function getInfrastructureAssistance(prompt: string, context: string): Promise<AssistantResponse> {
-  try {
-    const response = await fetch('/api/v1/assistant', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt, context }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      return {
-        content: data.response || "I couldn't generate a response.",
-        provider: data.provider || 'unknown',
-        isOfflineFallback: false,
-      };
-    }
-
-    // Server returned an error — check if it suggests offline runbook
-    const errorData = await response.json().catch(() => null);
-    if (errorData?.fallback === 'offline_runbook') {
-      return offlineFallback(prompt);
-    }
-
-    throw new Error(errorData?.error || `HTTP ${response.status}`);
-  } catch (error) {
-    // Network error or server unreachable — go offline
-    console.warn('AI service unreachable, using offline runbook:', error);
-    return offlineFallback(prompt);
-  }
+export interface EnhancementState {
+  reachable: boolean | null;   // null = not probed yet
+  providers: string[];
+  checkedAt: string | null;
 }
 
-/** Check health of all AI providers */
-export async function checkProviderHealth(): Promise<{
-  providers: Record<string, { configured: boolean; circuit: string }>;
-  activeProviders: string[];
-} | null> {
-  try {
-    const res = await fetch('/api/v1/health');
-    if (!res.ok) return null;
-    return await res.json();
-  } catch {
-    return null;
-  }
-}
+const PROBE_TIMEOUT_MS = 3_000;
+const ENHANCEMENT_TIMEOUT_MS = 20_000;
 
-// --- Offline Runbook Matching ---
+// --- Base layer ---
 
-function offlineFallback(prompt: string): AssistantResponse {
-  const lower = prompt.toLowerCase();
-  const matches = matchRunbookEntries(lower);
+/** Synchronous. Always produces a result. */
+export function baseLayerResponse(prompt: string): AssistantResponse {
+  const matches = matchRunbookEntries(prompt);
 
   if (matches.length === 0) {
     return {
-      content: `[OFFLINE MODE] I'm operating without AI service connectivity.\n\nI couldn't find a specific runbook match for your query. Here's what I can help with offline:\n\n${EMERGENCY_RUNBOOK.map(r => `- "${r.title}" (${r.severity})`).join('\n')}\n\nTry asking about: outage, orbital drift, gateway, API, pipeline, or emergency procedures.`,
-      provider: 'offline_runbook',
-      isOfflineFallback: true,
+      content:
+        `[BASE LAYER rev ${RUNBOOK_REVISION}] No runbook match for that wording.\n\n` +
+        `Procedures available:\n${EMERGENCY_RUNBOOK.map((r) => `- ${r.id} "${r.title}" (${r.severity})`).join('\n')}\n\n` +
+        `Try: outage, orbital drift, gateway, API, pipeline.`,
+      provider: 'base',
+      layer: 'base',
     };
   }
 
   const entry = matches[0];
   const steps = entry.steps.map((s, i) => `  ${i + 1}. ${s}`).join('\n');
-  const rollback = entry.rollback.map(s => `  - ${s}`).join('\n');
+  const rollback = entry.rollback.map((s) => `  - ${s}`).join('\n');
 
-  let response = `[OFFLINE MODE] Using pre-computed emergency runbook.\n\n`;
-  response += `**${entry.title}** (Severity: ${entry.severity.toUpperCase()})\n\n`;
-  response += `Trigger: ${entry.trigger}\n\n`;
-  response += `Steps:\n${steps}\n\n`;
-  response += `Rollback:\n${rollback}\n\n`;
-  response += `Impact: ${entry.estimatedImpact}`;
-
+  let content = `[BASE LAYER rev ${RUNBOOK_REVISION}] ${entry.id}\n\n`;
+  content += `**${entry.title}** (Severity: ${entry.severity.toUpperCase()})\n\n`;
+  content += `Trigger: ${entry.trigger}\n\n`;
+  content += `Steps:\n${steps}\n\n`;
+  content += `Rollback:\n${rollback}\n\n`;
+  content += `Impact: ${entry.estimatedImpact}`;
   if (matches.length > 1) {
-    response += `\n\n---\nAlso relevant: ${matches.slice(1).map(m => `"${m.title}"`).join(', ')}`;
+    content += `\n\n---\nAlso relevant: ${matches.slice(1).map((m) => `"${m.title}"`).join(', ')}`;
   }
 
-  return {
-    content: response,
-    provider: 'offline_runbook',
-    isOfflineFallback: true,
-  };
+  return { content, provider: 'base', layer: 'base' };
 }
 
-const KEYWORD_MAP: Record<string, string[]> = {
-  'rb-001': ['outage', 'down', 'offline', 'all services', 'total failure', 'everything down', 'kill switch', 'critical'],
-  'rb-002': ['orbital', 'drift', 'eccentricity', 'node drift', 'phycom', 'realignment', 'physics', 'orbit'],
-  'rb-003': ['gateway', 'api gateway', 'latency', 'saturate', 'ddos', 'traffic', 'rate limit', 'overload', 'cpu'],
-  'rb-004': ['ai unavailable', 'gemini', 'assistant down', 'api error', 'ai down', 'llm', 'model', 'claude', 'openai'],
-  'rb-005': ['pipeline', 'recovery', 'injection', 'data pipeline', 'cache', 'warm-up', 'rebalance', 'failed'],
-};
+// --- Enhancement ---
 
-function matchRunbookEntries(query: string): RunbookEntry[] {
-  const scored = EMERGENCY_RUNBOOK.map((entry) => {
-    const keywords = KEYWORD_MAP[entry.id] || [];
-    const score = keywords.reduce((sum, kw) => sum + (query.includes(kw) ? 1 : 0), 0);
-    return { entry, score };
-  });
+function withTimeout(ms: number): { signal: AbortSignal; clear: () => void } {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  return { signal: controller.signal, clear: () => clearTimeout(timer) };
+}
 
-  return scored
-    .filter((s) => s.score > 0)
-    .sort((a, b) => b.score - a.score)
-    .map((s) => s.entry);
+/** One probe. Never throws. Call on mount, on the browser `online` event, or on operator request. */
+export async function probeEnhancement(): Promise<EnhancementState> {
+  const t = withTimeout(PROBE_TIMEOUT_MS);
+  try {
+    const res = await fetch('/api/v1/health', { signal: t.signal });
+    if (!res.ok) return { reachable: false, providers: [], checkedAt: new Date().toISOString() };
+    const data = await res.json();
+    const providers: string[] = Array.isArray(data.activeProviders) ? data.activeProviders : [];
+    return { reachable: providers.length > 0, providers, checkedAt: new Date().toISOString() };
+  } catch {
+    return { reachable: false, providers: [], checkedAt: new Date().toISOString() };
+  } finally {
+    t.clear();
+  }
+}
+
+/**
+ * Ask a provider to augment what the base layer already produced.
+ * Returns null on any failure. Never throws. Never retries.
+ */
+export async function requestEnhancement(
+  prompt: string,
+  context: string,
+  base: AssistantResponse,
+): Promise<AssistantResponse | null> {
+  const t = withTimeout(ENHANCEMENT_TIMEOUT_MS);
+  try {
+    const res = await fetch('/api/v1/assistant', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prompt,
+        // The server caps context at 2000 chars. Base result goes first so the
+        // provider sees what the operator already has.
+        context: `${base.content.slice(0, 1400)}\n\n${context}`.slice(0, 2000),
+      }),
+      signal: t.signal,
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (!data.response) return null;
+    return { content: data.response, provider: data.provider || 'unknown', layer: 'enhancement' };
+  } catch {
+    return null;
+  } finally {
+    t.clear();
+  }
 }
