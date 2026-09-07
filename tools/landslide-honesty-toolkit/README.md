@@ -31,6 +31,7 @@ A complete open-source system for landslide susceptibility mapping that **enforc
 | `QGIS_WORKFLOW_GUIDE.md` | Complete step-by-step guide | QGIS users |
 | `COMMUNITY_TOOLKIT.md` | Local reporting & neighbor networks | Community leaders |
 | `QUICK_START_GUIDE.md` | Dyslexic-friendly quick reference | Everyone |
+| `TRAINING_MODULE.md` | Self-service training: coverage report first, five-state graded finding, open data only (CC0) | Everyone, no GIS background |
 | `architecture_diagram.png` | Visual system overview | Everyone |
 | `us_state_coverage_map.png` | State inventory coverage map | Everyone |
 
