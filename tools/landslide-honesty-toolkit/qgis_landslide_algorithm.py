@@ -433,7 +433,7 @@ class LandslideSusceptibilityHonest(QgsProcessingAlgorithm):
                 to produce a validated landslide susceptibility map for your region. A map without local
                 landslide inventory validation is marked UNVALIDATED and should not be used for construction
                 siting or emergency planning without professional geotechnical review.</p>
-                <p><strong>License:</strong> Open Source (MIT) | <strong>Tool:</strong> Landslide Honesty Engine v1.0</p>
+                <p><strong>License:</strong> CC0 1.0 Universal, no rights reserved | <strong>Tool:</strong> Landslide Honesty Engine v1.0</p>
             </div>
         </body>
         </html>
