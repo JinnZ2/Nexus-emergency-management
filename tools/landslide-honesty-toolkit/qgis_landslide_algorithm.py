@@ -30,8 +30,7 @@ Data Sources Used:
   - Roads: OpenStreetMap (via QuickOSM plugin or Geofabrik)
   - Landslide Inventory: USGS ScienceBase + state sources
 
-Author: Community Emergency Mapping Initiative
-License: MIT
+License: CC0 1.0 Universal. No rights reserved.
 """
 
 from qgis.PyQt.QtCore import QCoreApplication

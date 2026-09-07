@@ -14,8 +14,7 @@ To use:
 3. Paste this script and run
 4. Or save as .py file and run via Processing > Scripts
 
-Author: Community Emergency Mapping Initiative
-License: MIT
+License: CC0 1.0 Universal. No rights reserved.
 """
 
 from qgis.core import (

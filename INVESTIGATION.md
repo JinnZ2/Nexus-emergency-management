@@ -241,7 +241,8 @@ No recommendation in this pass.
 `tools/landslide-honesty-toolkit/LICENSE` and
 `tools/floodplain-honesty-toolkit/LICENSE` (merged in #6 and #7) are MIT
 with a named copyright holder, and the same attribution appears in their
-READMEs, guides, and Python headers. This conflicts with "CC0 throughout"
-and "no author characterisation". They were left as merged because
-rewriting a licence and attribution that this pass did not author is a
-decision for the repository owner. The root README states the exception.
+READMEs, guides, and Python headers. This conflicted with "CC0 throughout"
+and "no author characterisation". Left as merged in the first pass;
+relicensed to CC0 on the repository owner's instruction in the follow-up
+commit, with the named-holder attribution lines removed since CC0 carries
+no notice requirement.

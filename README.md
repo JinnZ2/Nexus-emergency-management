@@ -278,8 +278,5 @@ offline base. `python3 test_channels.py` prints the surviving set per mode.
 
 ## License
 
-CC0 1.0 Universal. No rights reserved. Full text in `LICENSE`.
-
-Two subfolders merged separately carry their own MIT `LICENSE` files as they
-arrived: `tools/landslide-honesty-toolkit/` and
-`tools/floodplain-honesty-toolkit/`. See `INVESTIGATION.md`.
+CC0 1.0 Universal. No rights reserved. Full text in `LICENSE`. The same
+text is in each toolkit folder under `tools/`.

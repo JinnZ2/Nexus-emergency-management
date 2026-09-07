@@ -404,4 +404,3 @@ That is exactly how community inventory-building works.
 ---
 
 *Guide Version 1.0 | 2026-09-07*
-*Community Emergency Mapping Initiative*
