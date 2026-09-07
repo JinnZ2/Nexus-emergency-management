@@ -35,6 +35,8 @@ export interface OrbitalNode {
 export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
+  layer?: 'base' | 'enhancement';   // which layer produced an assistant message
+  provider?: string;                // 'base' | 'gemini' | 'claude' | 'openai'
 }
 
 export interface AgentManifest {

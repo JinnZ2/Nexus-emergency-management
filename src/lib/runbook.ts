@@ -1,9 +1,16 @@
 /**
- * Offline Emergency Runbook
+ * Runbook access for connected mode.
  *
- * Pre-computed decision trees and procedures that work without network/API.
- * These are the fallback when the AI assistant is unreachable.
+ * The runbook does not live here. It lives in the base layer,
+ * offline/index.html, as an embedded JSON block, mirrored in offline/RUNBOOK.md.
+ * This module reads that file at build time (Vite `?raw` import) and exposes
+ * the parsed data to the React application.
+ *
+ * Direction of dependency: the app reads the base layer. The base layer never
+ * reads the app. Edit the runbook in offline/index.html and offline/RUNBOOK.md
+ * together; test_base_layer.py checks that they agree.
  */
+import baseLayerHtml from '../../offline/index.html?raw';
 
 export interface RunbookEntry {
   id: string;
@@ -15,104 +22,27 @@ export interface RunbookEntry {
   estimatedImpact: string;
 }
 
-export const EMERGENCY_RUNBOOK: RunbookEntry[] = [
-  {
-    id: 'rb-001',
-    title: 'Total Service Outage',
-    severity: 'critical',
-    trigger: 'All TRDAP services report critical status simultaneously',
-    steps: [
-      'Verify outage is real (check from multiple vantage points)',
-      'Activate Global Kill Switch to prevent cascading damage',
-      'Isolate affected infrastructure layers (edge -> core)',
-      'Enable Safe Mode on all compute nodes',
-      'Initiate TRDAP Recovery pipeline for last known-good deployment',
-      'Gradually re-enable services starting from core layer outward',
-      'Monitor orbital node health for 15 minutes before declaring recovery',
-    ],
-    rollback: [
-      'If recovery pipeline fails, manually roll back via deployment history',
-      'If safe mode is unstable, trigger full cache flush before retry',
-      'Last resort: BGP reroute to disaster recovery site',
-    ],
-    estimatedImpact: 'Full platform downtime. All user-facing services affected.',
-  },
-  {
-    id: 'rb-002',
-    title: 'Orbital Node Drift',
-    severity: 'high',
-    trigger: 'Orbital eccentricity exceeds 0.05 limit on any node',
-    steps: [
-      'Identify drifting node(s) in Orbital Monitoring panel',
-      'Check physics health logs for drag anomalies or gravitational perturbation',
-      'Initiate Orbital Realignment pipeline',
-      'If node health drops below 80%, isolate from mesh network',
-      'Apply delta-V correction if PHYCOM seed expansion indicates recoverable trajectory',
-      'Verify node sync returns to >99% before reconnecting to mesh',
-    ],
-    rollback: [
-      'If realignment fails, decommission node and redistribute load',
-      'Activate Resource Injection pipeline to backfill capacity',
-    ],
-    estimatedImpact: 'Degraded performance in affected sector. Possible data replication lag.',
-  },
-  {
-    id: 'rb-003',
-    title: 'API Gateway Saturation',
-    severity: 'high',
-    trigger: 'API Gateway latency >500ms or CPU >95%',
-    steps: [
-      'Check for DDoS pattern in traffic analysis',
-      'Enable WAF rate limiting if not already active',
-      'Flush global cache to free memory',
-      'Scale edge layer horizontally if infrastructure allows',
-      'If traffic is legitimate, activate Mesh Rebalance pipeline',
-      'Monitor for 10 minutes, escalate to BGP reroute if unresolved',
-    ],
-    rollback: [
-      'Disable rate limiting if false positive detected',
-      'Revert mesh weights to previous configuration',
-    ],
-    estimatedImpact: 'Elevated latency for all API consumers. Possible timeout errors.',
-  },
-  {
-    id: 'rb-004',
-    title: 'AI Assistant Unavailable',
-    severity: 'medium',
-    trigger: 'Gemini API returns errors or is unreachable',
-    steps: [
-      'Verify API key is valid and not rate-limited',
-      'Check server/api.ts health endpoint at /api/v1/health',
-      'Use this runbook for manual decision-making until AI is restored',
-      'If persistent (>30 min), switch to manual monitoring mode',
-      'All emergency actions remain available through the UI regardless of AI status',
-    ],
-    rollback: [
-      'Restart API server: npm run dev:server',
-      'If API key is compromised, rotate immediately and update .env.local',
-    ],
-    estimatedImpact: 'No AI-assisted analysis. Manual operation only. No data loss.',
-  },
-  {
-    id: 'rb-005',
-    title: 'Data Pipeline Failure',
-    severity: 'high',
-    trigger: 'Resource Injection or TRDAP Recovery pipeline enters error state',
-    steps: [
-      'Check pipeline error message in Direct Pipelines panel',
-      'Verify storage layer health (Storage Engine, Cache Layer)',
-      'If storage is healthy, retry pipeline with fresh parameters',
-      'If storage is degraded, initiate Cache Warm-up pipeline first',
-      'Monitor compute provisioning in affected sector',
-      'Verify data integrity after pipeline recovery',
-    ],
-    rollback: [
-      'If pipeline is stuck, kill and restart from last checkpoint',
-      'If data corruption detected, restore from last verified snapshot',
-    ],
-    estimatedImpact: 'Affected sector operates at reduced capacity until resolved.',
-  },
-];
+export interface BaseLayerRunbook {
+  revision: string;
+  entries: RunbookEntry[];
+  keywords: Record<string, string[]>;
+}
+
+/** Path of the base layer relative to the repository root. */
+export const BASE_LAYER_PATH = 'offline/index.html';
+
+function readBaseLayer(html: string): BaseLayerRunbook {
+  const match = html.match(/<script type="application\/json" id="nexus-runbook">\s*([\s\S]*?)\s*<\/script>/);
+  if (!match) {
+    throw new Error(`runbook block not found in ${BASE_LAYER_PATH}`);
+  }
+  return JSON.parse(match[1]) as BaseLayerRunbook;
+}
+
+export const BASE_LAYER: BaseLayerRunbook = readBaseLayer(baseLayerHtml);
+export const EMERGENCY_RUNBOOK: RunbookEntry[] = BASE_LAYER.entries;
+export const RUNBOOK_KEYWORDS: Record<string, string[]> = BASE_LAYER.keywords;
+export const RUNBOOK_REVISION: string = BASE_LAYER.revision;
 
 /** Look up a runbook entry by ID */
 export function getRunbookEntry(id: string): RunbookEntry | undefined {
@@ -122,4 +52,17 @@ export function getRunbookEntry(id: string): RunbookEntry | undefined {
 /** Find applicable runbook entries by severity */
 export function getRunbookBySeverity(severity: RunbookEntry['severity']): RunbookEntry[] {
   return EMERGENCY_RUNBOOK.filter((entry) => entry.severity === severity);
+}
+
+/** Keyword scoring. Same logic as the base layer's own search. */
+export function matchRunbookEntries(query: string): RunbookEntry[] {
+  const lower = query.toLowerCase();
+  return EMERGENCY_RUNBOOK
+    .map((entry) => ({
+      entry,
+      score: (RUNBOOK_KEYWORDS[entry.id] || []).reduce((sum, kw) => sum + (lower.includes(kw) ? 1 : 0), 0),
+    }))
+    .filter((s) => s.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map((s) => s.entry);
 }

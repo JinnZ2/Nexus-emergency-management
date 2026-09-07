@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nexus Base Layer</title>
+<!--
+  NEXUS EMERGENCY MANAGEMENT - BASE LAYER
+
+  This file is the base of the stack. It runs with:
+    no network, no server process, no API key, no build step, no npm.
+
+  Open it from local storage (file://) in any browser. The runbook content
+  is also in RUNBOOK.md next to this file, readable if this page will not render.
+
+  The connected-mode application (React/Vite/Express in the repo root) reads
+  the runbook data embedded below. This file never calls into that application.
+
+  CC0 1.0 Universal. No rights reserved.
+-->
+<style>
+  :root {
+    --bg: #0c0c0e; --panel: #141417; --line: #2a2a30; --text: #e6e6ea; --dim: #9a9aa4;
+    --accent: #f97316; --crit: #f43f5e; --high: #f59e0b; --med: #3b82f6; --ok: #10b981;
+    --enh: #6b6b78;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 960px; margin: 0 auto; padding: 16px; }
+  header { border-bottom: 2px solid var(--accent); padding-bottom: 12px; margin-bottom: 16px; }
+  header h1 { margin: 0; font-size: 22px; letter-spacing: .04em; }
+  header p { margin: 4px 0 0; color: var(--dim); font-size: 14px; }
+  .strip { display: flex; flex-wrap: wrap; gap: 8px 18px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: var(--dim); margin-top: 10px; }
+  .strip b { color: var(--text); font-weight: 600; }
+  section { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+  section > h2 { margin: 0 0 10px; font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: var(--dim); }
+  .enh { border-style: dashed; border-color: var(--enh); }
+  .tag { display: inline-block; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; padding: 2px 7px; border-radius: 999px; border: 1px solid; margin-left: 6px; vertical-align: middle; }
+  .tag.critical { color: var(--crit); border-color: var(--crit); }
+  .tag.high { color: var(--high); border-color: var(--high); }
+  .tag.medium { color: var(--med); border-color: var(--med); }
+  .tag.enhancement { color: var(--enh); border-color: var(--enh); }
+  .tag.base { color: var(--ok); border-color: var(--ok); }
+  .proc { border: 1px solid var(--line); border-radius: 8px; margin-bottom: 8px; overflow: hidden; }
+  .proc > button.head { width: 100%; text-align: left; background: none; border: 0; color: var(--text); font: inherit; font-weight: 600; padding: 12px 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; min-height: 48px; }
+  .proc > button.head:hover { background: #1c1c21; }
+  .proc .body { display: none; padding: 0 14px 14px; border-top: 1px solid var(--line); }
+  .proc.open .body { display: block; }
+  .proc .prog { font-family: ui-monospace, monospace; font-size: 12px; color: var(--dim); }
+  .lbl { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--dim); margin: 12px 0 6px; }
+  .steps { list-style: none; padding: 0; margin: 0; }
+  .steps li { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px dotted var(--line); }
+  .steps input { width: 22px; height: 22px; margin-top: 1px; flex: 0 0 auto; accent-color: var(--accent); }
+  .steps label { cursor: pointer; }
+  .steps li.done label { color: var(--dim); text-decoration: line-through; }
+  ul.rb { padding-left: 18px; margin: 0; color: var(--dim); }
+  .impact { background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; color: var(--high); font-size: 14px; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
+  button.act, a.act { background: #1f1f25; color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 9px 12px; font: inherit; font-size: 14px; cursor: pointer; min-height: 40px; text-decoration: none; display: inline-flex; align-items: center; }
+  button.act:hover, a.act:hover { border-color: var(--accent); }
+  button.act.primary { background: var(--accent); color: #111; border-color: var(--accent); font-weight: 600; }
+  button.act:disabled { opacity: .4; cursor: not-allowed; }
+  input[type=text], textarea, select { width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 9px 10px; font: inherit; font-size: 14px; }
+  textarea { min-height: 80px; resize: vertical; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } }
+  .result { border-left: 3px solid var(--accent); padding: 8px 12px; margin-top: 10px; background: var(--bg); border-radius: 0 6px 6px 0; }
+  .result.none { border-left-color: var(--dim); color: var(--dim); }
+  .audit { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; max-height: 260px; overflow: auto; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; }
+  .audit div { padding: 2px 0; white-space: pre-wrap; }
+  .audit .k-decision { color: var(--med); }
+  .audit .k-manual { color: var(--high); }
+  .audit .k-procedure { color: var(--ok); }
+  .audit .k-info { color: var(--dim); }
+  .note { font-size: 13px; color: var(--dim); margin: 6px 0 0; }
+  .note.warn { color: var(--high); }
+  .err { color: var(--crit); font-size: 13px; min-height: 1em; }
+  .enhlist { display: grid; grid-template-columns: 1fr; gap: 6px; }
+  .enhlist div { display: flex; justify-content: space-between; gap: 10px; padding: 8px 10px; border: 1px dashed var(--line); border-radius: 6px; font-size: 14px; }
+  .enhlist span.what { color: var(--dim); }
+  #exportBox { display: none; margin-top: 10px; }
+  #exportBox.show { display: block; }
+  #exportText { font-family: ui-monospace, monospace; font-size: 12px; min-height: 160px; }
+  @media print {
+    html, body { background: #fff; color: #000; }
+    section { border-color: #999; break-inside: avoid; background: #fff; }
+    .proc .body { display: block !important; }
+    button, input[type=text], textarea, .strip, .enh, #search, .row { display: none !important; }
+    .audit { max-height: none; overflow: visible; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>NEXUS BASE LAYER <span class="tag base">base</span></h1>
+    <p>Offline emergency runbook, manual decision record, audit log. Runs from this file. Nothing here waits on a network, a server, or a key.</p>
+    <div class="strip">
+      <span>origin: <b id="stOrigin">-</b></span>
+      <span>storage: <b id="stStorage">-</b></span>
+      <span>runbook rev: <b id="stRev">-</b></span>
+      <span>connectivity (information only, never gates anything): <b id="stNet">-</b></span>
+    </div>
+  </header>
+
+  <section id="search">
+    <h2>Find a procedure</h2>
+    <input type="text" id="q" placeholder="Describe the situation: outage, drift, gateway, pipeline, AI down..." autocomplete="off">
+    <div id="qResult" class="result none">Type keywords. Matching is local keyword scoring, the same logic the connected-mode assistant uses as its base.</div>
+  </section>
+
+  <section>
+    <h2>Emergency runbook</h2>
+    <div id="procs"></div>
+    <p class="note">Step checkmarks and procedure completions are kept in this browser's storage when available, and in memory otherwise. Export the audit log before closing the tab.</p>
+  </section>
+
+  <section>
+    <h2>Decision record</h2>
+    <p class="note">Base-layer form of the accountability trail: what was proposed, what was decided, and why. Rationale is mandatory. Blank rationale is rejected.</p>
+    <div class="grid2">
+      <input type="text" id="dProposal" placeholder="What was proposed (by whom)">
+      <input type="text" id="dBy" placeholder="Decided by (role or name)">
+    </div>
+    <div class="grid2" style="margin-top:10px">
+      <select id="dDecision">
+        <option value="approved">approved</option>
+        <option value="rejected">rejected</option>
+        <option value="modified">modified</option>
+        <option value="deferred">deferred</option>
+      </select>
+      <input type="text" id="dDomain" placeholder="Domain (comms, power, water, labor, ES, infra)">
+    </div>
+    <textarea id="dRationale" style="margin-top:10px" placeholder="Rationale. Required. Why this decision, given what was known at the time."></textarea>
+    <div class="row">
+      <button class="act primary" id="dSave">Record decision</button>
+      <span class="err" id="dErr"></span>
+    </div>
+  </section>
+
+  <section class="enh">
+    <h2>Intervention triggers <span class="tag enhancement">enhancement only</span></h2>
+    <p class="note warn">These controls exist in connected mode (React application plus server). They are not executable from this file. If you carry out the equivalent action by hand at the equipment, record it here so the audit trail stays continuous.</p>
+    <div class="enhlist" id="manualActs"></div>
+    <div class="row">
+      <input type="text" id="mDetail" placeholder="Detail of the manual action (what, where, by whom)" style="flex:1 1 280px">
+    </div>
+  </section>
+
+  <section class="enh">
+    <h2>Connected-mode functions not present in this file <span class="tag enhancement">enhancement only</span></h2>
+    <div class="enhlist">
+      <div><span>AI analysis on top of the runbook (any provider)</span><span class="what">needs server process + provider reachability + key</span></div>
+      <div><span>TRDAP live telemetry (16 services, 4 layers)</span><span class="what">needs the React application and a data source</span></div>
+      <div><span>Orbital monitoring visualization</span><span class="what">needs the React application</span></div>
+      <div><span>ICS command reference, staging queue, decision statistics, JSON export</span><span class="what">needs the React application; the decision record above is the base form</span></div>
+      <div><span>Agent protocol manifest viewer</span><span class="what">needs the React application</span></div>
+    </div>
+    <p class="note">This page never probes for those services. Nothing is retried and nothing times out. When connected mode is available, it reads this file's runbook and layers on top of it.</p>
+  </section>
+
+  <section>
+    <h2>Audit log</h2>
+    <div class="audit" id="audit"></div>
+    <div class="row">
+      <button class="act" id="btnExport">Show export text</button>
+      <button class="act" id="btnCopy">Copy to clipboard</button>
+      <a class="act" id="btnDownload" download="nexus-base-audit.txt" href="#">Download .txt</a>
+      <button class="act" id="btnPrint">Print page</button>
+      <button class="act" id="btnClear">Clear log</button>
+    </div>
+    <div id="exportBox">
+      <textarea id="exportText" readonly></textarea>
+      <p class="note">Plain text. Select all and copy if the buttons do nothing in this browser.</p>
+    </div>
+    <p class="note warn">Survival: this log lives in this browser profile on this device only. It does not follow you to another device, another browser, or a wiped profile. Export it to paper, a file, or a message before the tab or device is lost.</p>
+  </section>
+
+  <footer class="note" style="text-align:center;margin:20px 0">
+    CC0 1.0 Universal. No rights reserved. Content mirror: RUNBOOK.md beside this file.
+  </footer>
+</main>
+
+<script type="application/json" id="nexus-runbook">
+{
+ "revision": "2026-09-06.1",
+ "entries": [
+  {
+   "id": "rb-001",
+   "title": "Total Service Outage",
+   "severity": "critical",
+   "trigger": "All TRDAP services report critical status simultaneously",
+   "steps": [
+    "Verify outage is real (check from multiple vantage points)",
+    "Activate Global Kill Switch to prevent cascading damage",
+    "Isolate affected infrastructure layers (edge -> core)",
+    "Enable Safe Mode on all compute nodes",
+    "Initiate TRDAP Recovery pipeline for last known-good deployment",
+    "Gradually re-enable services starting from core layer outward",
+    "Monitor orbital node health for 15 minutes before declaring recovery"
+   ],
+   "rollback": [
+    "If recovery pipeline fails, manually roll back via deployment history",
+    "If safe mode is unstable, trigger full cache flush before retry",
+    "Last resort: BGP reroute to disaster recovery site"
+   ],
+   "estimatedImpact": "Full platform downtime. All user-facing services affected."
+  },
+  {
+   "id": "rb-002",
+   "title": "Orbital Node Drift",
+   "severity": "high",
+   "trigger": "Orbital eccentricity exceeds 0.05 limit on any node",
+   "steps": [
+    "Identify drifting node(s) in Orbital Monitoring panel",
+    "Check physics health logs for drag anomalies or gravitational perturbation",
+    "Initiate Orbital Realignment pipeline",
+    "If node health drops below 80%, isolate from mesh network",
+    "Apply delta-V correction if PHYCOM seed expansion indicates recoverable trajectory",
+    "Verify node sync returns to >99% before reconnecting to mesh"
+   ],
+   "rollback": [
+    "If realignment fails, decommission node and redistribute load",
+    "Activate Resource Injection pipeline to backfill capacity"
+   ],
+   "estimatedImpact": "Degraded performance in affected sector. Possible data replication lag."
+  },
+  {
+   "id": "rb-003",
+   "title": "API Gateway Saturation",
+   "severity": "high",
+   "trigger": "API Gateway latency >500ms or CPU >95%",
+   "steps": [
+    "Check for DDoS pattern in traffic analysis",
+    "Enable WAF rate limiting if not already active",
+    "Flush global cache to free memory",
+    "Scale edge layer horizontally if infrastructure allows",
+    "If traffic is legitimate, activate Mesh Rebalance pipeline",
+    "Monitor for 10 minutes, escalate to BGP reroute if unresolved"
+   ],
+   "rollback": [
+    "Disable rate limiting if false positive detected",
+    "Revert mesh weights to previous configuration"
+   ],
+   "estimatedImpact": "Elevated latency for all API consumers. Possible timeout errors."
+  },
+  {
+   "id": "rb-004",
+   "title": "AI Assistant Unavailable",
+   "severity": "medium",
+   "trigger": "Gemini API returns errors or is unreachable",
+   "steps": [
+    "Verify API key is valid and not rate-limited",
+    "Check server/api.ts health endpoint at /api/v1/health",
+    "Use this runbook for manual decision-making until AI is restored",
+    "If persistent (>30 min), switch to manual monitoring mode",
+    "All emergency actions remain available through the UI regardless of AI status"
+   ],
+   "rollback": [
+    "Restart API server: npm run dev:server",
+    "If API key is compromised, rotate immediately and update .env.local"
+   ],
+   "estimatedImpact": "No AI-assisted analysis. Manual operation only. No data loss."
+  },
+  {
+   "id": "rb-005",
+   "title": "Data Pipeline Failure",
+   "severity": "high",
+   "trigger": "Resource Injection or TRDAP Recovery pipeline enters error state",
+   "steps": [
+    "Check pipeline error message in Direct Pipelines panel",
+    "Verify storage layer health (Storage Engine, Cache Layer)",
+    "If storage is healthy, retry pipeline with fresh parameters",
+    "If storage is degraded, initiate Cache Warm-up pipeline first",
+    "Monitor compute provisioning in affected sector",
+    "Verify data integrity after pipeline recovery"
+   ],
+   "rollback": [
+    "If pipeline is stuck, kill and restart from last checkpoint",
+    "If data corruption detected, restore from last verified snapshot"
+   ],
+   "estimatedImpact": "Affected sector operates at reduced capacity until resolved."
+  }
+ ],
+ "keywords": {
+  "rb-001": [
+   "outage",
+   "down",
+   "offline",
+   "all services",
+   "total failure",
+   "everything down",
+   "kill switch",
+   "critical"
+  ],
+  "rb-002": [
+   "orbital",
+   "drift",
+   "eccentricity",
+   "node drift",
+   "phycom",
+   "realignment",
+   "physics",
+   "orbit"
+  ],
+  "rb-003": [
+   "gateway",
+   "api gateway",
+   "latency",
+   "saturate",
+   "ddos",
+   "traffic",
+   "rate limit",
+   "overload",
+   "cpu"
+  ],
+  "rb-004": [
+   "ai unavailable",
+   "gemini",
+   "assistant down",
+   "api error",
+   "ai down",
+   "llm",
+   "model",
+   "claude",
+   "openai"
+  ],
+  "rb-005": [
+   "pipeline",
+   "recovery",
+   "injection",
+   "data pipeline",
+   "cache",
+   "warm-up",
+   "rebalance",
+   "failed"
+  ]
+ }
+}
+</script>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------- data ----------
+  var DATA = JSON.parse(document.getElementById('nexus-runbook').textContent);
+  var RUNBOOK = DATA.entries;
+  var KEYWORDS = DATA.keywords;
+
+  var MANUAL_ACTIONS = [
+    { id: 'kill-all', label: 'Global Kill Switch', risk: 'high' },
+    { id: 'safe-mode', label: 'Enable Safe Mode', risk: 'medium' },
+    { id: 'flush-cache', label: 'Flush Global Cache', risk: 'low' },
+    { id: 'reroute', label: 'Reroute Traffic (BGP)', risk: 'high' }
+  ];
+
+  // ---------- storage (works with or without localStorage) ----------
+  var mem = {};
+  var storageOK = false;
+  try {
+    var t = '__nexus_probe__';
+    localStorage.setItem(t, '1'); localStorage.removeItem(t);
+    storageOK = true;
+  } catch (e) { storageOK = false; }
+
+  function load(key, fallback) {
+    try {
+      var raw = storageOK ? localStorage.getItem(key) : mem[key];
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (e) { return fallback; }
+  }
+  function save(key, value) {
+    var raw = JSON.stringify(value);
+    mem[key] = raw;
+    if (storageOK) { try { localStorage.setItem(key, raw); } catch (e) { /* quota or disabled: memory copy stands */ } }
+  }
+
+  var K_STEPS = 'nexus_base_steps';
+  var K_AUDIT = 'nexus_base_audit';
+  var MAX_AUDIT = 1000;
+
+  // ---------- audit ----------
+  function audit(kind, action, detail) {
+    var log = load(K_AUDIT, []);
+    log.unshift({ ts: new Date().toISOString(), kind: kind, action: action, detail: detail });
+    if (log.length > MAX_AUDIT) log.length = MAX_AUDIT;
+    save(K_AUDIT, log);
+    renderAudit();
+  }
+  function auditText() {
+    var log = load(K_AUDIT, []);
+    var lines = ['NEXUS BASE LAYER AUDIT LOG', 'exported ' + new Date().toISOString(), 'runbook rev ' + DATA.revision, 'entries ' + log.length, ''];
+    for (var i = log.length - 1; i >= 0; i--) {
+      var e = log[i];
+      lines.push(e.ts + '  [' + e.kind + ']  ' + e.action + '  --  ' + e.detail);
+    }
+    return lines.join('\n');
+  }
+  function renderAudit() {
+    var el = document.getElementById('audit');
+    var log = load(K_AUDIT, []);
+    el.innerHTML = '';
+    if (!log.length) {
+      var d = document.createElement('div'); d.className = 'k-info'; d.textContent = '(empty) actions, decisions, and procedure completions appear here'; el.appendChild(d); return;
+    }
+    for (var i = 0; i < log.length; i++) {
+      var e = log[i];
+      var row = document.createElement('div');
+      row.className = 'k-' + e.kind;
+      row.textContent = e.ts.slice(11, 19) + '  ' + e.action + '  ' + e.detail;
+      el.appendChild(row);
+    }
+  }
+
+  // ---------- runbook render ----------
+  function stepState() { return load(K_STEPS, {}); }
+  function setStep(pid, idx, val) {
+    var s = stepState(); s[pid] = s[pid] || {}; s[pid][idx] = !!val; save(K_STEPS, s);
+  }
+  function progress(p) {
+    var s = stepState()[p.id] || {}; var n = 0;
+    for (var i = 0; i < p.steps.length; i++) if (s[i]) n++;
+    return n;
+  }
+
+  function renderProcs() {
+    var host = document.getElementById('procs');
+    host.innerHTML = '';
+    RUNBOOK.forEach(function (p) {
+      var box = document.createElement('div'); box.className = 'proc'; box.id = 'proc-' + p.id;
+
+      var head = document.createElement('button'); head.className = 'head'; head.type = 'button';
+      head.setAttribute('aria-expanded', 'false');
+      var left = document.createElement('span');
+      left.textContent = p.id + '  ' + p.title;
+      var sev = document.createElement('span'); sev.className = 'tag ' + p.severity; sev.textContent = p.severity;
+      left.appendChild(sev);
+      var prog = document.createElement('span'); prog.className = 'prog'; prog.id = 'prog-' + p.id;
+      head.appendChild(left); head.appendChild(prog);
+      head.onclick = function () { box.classList.toggle('open'); head.setAttribute('aria-expanded', box.classList.contains('open') ? 'true' : 'false'); };
+
+      var body = document.createElement('div'); body.className = 'body';
+      body.appendChild(lbl('Trigger'));
+      var trig = document.createElement('div'); trig.textContent = p.trigger; body.appendChild(trig);
+
+      body.appendChild(lbl('Steps'));
+      var ol = document.createElement('ul'); ol.className = 'steps';
+      var st = stepState()[p.id] || {};
+      p.steps.forEach(function (text, i) {
+        var li = document.createElement('li'); if (st[i]) li.className = 'done';
+        var cb = document.createElement('input'); cb.type = 'checkbox'; cb.id = p.id + '-s' + i; cb.checked = !!st[i];
+        var lab = document.createElement('label'); lab.htmlFor = cb.id; lab.textContent = (i + 1) + '. ' + text;
+        cb.onchange = function () { setStep(p.id, i, cb.checked); li.className = cb.checked ? 'done' : ''; updateProg(p); };
+        li.appendChild(cb); li.appendChild(lab); ol.appendChild(li);
+      });
+      body.appendChild(ol);
+
+      body.appendChild(lbl('Rollback'));
+      var rb = document.createElement('ul'); rb.className = 'rb';
+      p.rollback.forEach(function (r) { var li = document.createElement('li'); li.textContent = r; rb.appendChild(li); });
+      body.appendChild(rb);
+
+      body.appendChild(lbl('Estimated impact'));
+      var imp = document.createElement('div'); imp.className = 'impact'; imp.textContent = p.estimatedImpact; body.appendChild(imp);
+
+      var row = document.createElement('div'); row.className = 'row';
+      var done = document.createElement('button'); done.className = 'act primary'; done.type = 'button'; done.textContent = 'Mark procedure complete';
+      done.onclick = function () {
+        audit('procedure', p.id + ' complete', p.title + ' (' + progress(p) + '/' + p.steps.length + ' steps checked)');
+      };
+      var reset = document.createElement('button'); reset.className = 'act'; reset.type = 'button'; reset.textContent = 'Reset steps';
+      reset.onclick = function () {
+        var s = stepState(); delete s[p.id]; save(K_STEPS, s); renderProcs();
+        audit('info', p.id + ' reset', p.title + ' step checkmarks cleared');
+      };
+      var blocked = document.createElement('button'); blocked.className = 'act'; blocked.type = 'button'; blocked.textContent = 'Record blocked';
+      blocked.onclick = function () {
+        var why = window.prompt('What blocked ' + p.id + '? Name the exact element.');
+        if (why && why.trim()) audit('procedure', p.id + ' blocked', p.title + ': ' + why.trim());
+      };
+      row.appendChild(done); row.appendChild(blocked); row.appendChild(reset);
+      body.appendChild(row);
+
+      box.appendChild(head); box.appendChild(body); host.appendChild(box);
+      updateProg(p);
+    });
+  }
+  function lbl(t) { var d = document.createElement('div'); d.className = 'lbl'; d.textContent = t; return d; }
+  function updateProg(p) { var el = document.getElementById('prog-' + p.id); if (el) el.textContent = progress(p) + '/' + p.steps.length; }
+
+  // ---------- search (same keyword scoring the connected app uses as its base) ----------
+  function matchRunbook(query) {
+    var q = query.toLowerCase();
+    var scored = RUNBOOK.map(function (e) {
+      var kws = KEYWORDS[e.id] || []; var score = 0;
+      kws.forEach(function (k) { if (q.indexOf(k) !== -1) score++; });
+      return { e: e, score: score };
+    }).filter(function (s) { return s.score > 0; }).sort(function (a, b) { return b.score - a.score; });
+    return scored.map(function (s) { return s.e; });
+  }
+  function renderSearch() {
+    var q = document.getElementById('q').value.trim();
+    var out = document.getElementById('qResult');
+    if (!q) { out.className = 'result none'; out.textContent = 'Type keywords. Matching is local keyword scoring, the same logic the connected-mode assistant uses as its base.'; return; }
+    var m = matchRunbook(q);
+    if (!m.length) {
+      out.className = 'result none';
+      out.textContent = 'No runbook match. Available: ' + RUNBOOK.map(function (e) { return e.title + ' (' + e.severity + ')'; }).join('; ') + '. Try: outage, orbital drift, gateway, API, pipeline.';
+      return;
+    }
+    out.className = 'result'; out.innerHTML = '';
+    var first = m[0];
+    var h = document.createElement('div'); h.innerHTML = '<b></b>'; h.firstChild.textContent = first.id + '  ' + first.title + '  [' + first.severity + ']'; out.appendChild(h);
+    var tr = document.createElement('div'); tr.className = 'note'; tr.textContent = 'Trigger: ' + first.trigger; out.appendChild(tr);
+    var go = document.createElement('button'); go.className = 'act'; go.type = 'button'; go.textContent = 'Open procedure'; go.style.marginTop = '8px';
+    go.onclick = function () { var b = document.getElementById('proc-' + first.id); b.classList.add('open'); b.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+    out.appendChild(go);
+    if (m.length > 1) { var also = document.createElement('div'); also.className = 'note'; also.textContent = 'Also relevant: ' + m.slice(1).map(function (e) { return e.title; }).join(', '); out.appendChild(also); }
+  }
+
+  // ---------- manual actions (enhancement-only controls, recorded by hand) ----------
+  function renderManual() {
+    var host = document.getElementById('manualActs');
+    MANUAL_ACTIONS.forEach(function (a) {
+      var row = document.createElement('div');
+      var l = document.createElement('span'); l.textContent = a.label; var t = document.createElement('span'); t.className = 'tag ' + (a.risk === 'high' ? 'critical' : a.risk === 'medium' ? 'high' : 'medium'); t.textContent = 'risk ' + a.risk; l.appendChild(t);
+      var b = document.createElement('button'); b.className = 'act'; b.type = 'button'; b.textContent = 'Record done manually';
+      b.onclick = function () {
+        var d = document.getElementById('mDetail').value.trim();
+        if (a.risk === 'high') {
+          var c = window.prompt('High-risk action. Type CONFIRM to record that ' + a.label + ' was carried out manually.');
+          if (c !== 'CONFIRM') { audit('info', a.label + ' not recorded', 'confirmation not typed'); return; }
+        }
+        audit('manual', a.label + ' (manual)', d || 'no detail given');
+        document.getElementById('mDetail').value = '';
+      };
+      row.appendChild(l); row.appendChild(b); host.appendChild(row);
+    });
+  }
+
+  // ---------- decision record ----------
+  function saveDecision() {
+    var proposal = document.getElementById('dProposal').value.trim();
+    var by = document.getElementById('dBy').value.trim();
+    var decision = document.getElementById('dDecision').value;
+    var domain = document.getElementById('dDomain').value.trim();
+    var rationale = document.getElementById('dRationale').value.trim();
+    var err = document.getElementById('dErr');
+    if (!proposal) { err.textContent = 'Proposal is required.'; return; }
+    if (!rationale) { err.textContent = 'Rationale is required. Blank rationale is rejected.'; return; }
+    err.textContent = '';
+    audit('decision', decision.toUpperCase() + ' by ' + (by || 'unnamed'), '[' + (domain || 'unspecified') + '] ' + proposal + ' || rationale: ' + rationale);
+    document.getElementById('dProposal').value = ''; document.getElementById('dRationale').value = '';
+  }
+
+  // ---------- export ----------
+  function showExport() {
+    var box = document.getElementById('exportBox'); box.classList.add('show');
+    document.getElementById('exportText').value = auditText();
+  }
+  function copyExport() {
+    showExport();
+    var ta = document.getElementById('exportText'); ta.focus(); ta.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    if (!ok && navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(ta.value).then(function () { audit('info', 'export copied', 'clipboard'); }, function () {}); return; }
+    if (ok) audit('info', 'export copied', 'clipboard');
+  }
+  function prepDownload() {
+    var a = document.getElementById('btnDownload');
+    a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(auditText());
+    a.download = 'nexus-base-audit-' + new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-') + '.txt';
+  }
+
+  // ---------- status strip ----------
+  function renderStatus() {
+    document.getElementById('stOrigin').textContent = location.protocol === 'file:' ? 'file:// (local storage)' : location.origin;
+    document.getElementById('stStorage').textContent = storageOK ? 'localStorage' : 'memory only (export before closing)';
+    document.getElementById('stRev').textContent = DATA.revision;
+    var n = document.getElementById('stNet');
+    n.textContent = (typeof navigator.onLine === 'boolean') ? (navigator.onLine ? 'browser reports online' : 'browser reports offline') : 'unknown';
+  }
+
+  // ---------- wire ----------
+  document.getElementById('q').addEventListener('input', renderSearch);
+  document.getElementById('dSave').addEventListener('click', saveDecision);
+  document.getElementById('btnExport').addEventListener('click', showExport);
+  document.getElementById('btnCopy').addEventListener('click', copyExport);
+  document.getElementById('btnDownload').addEventListener('click', prepDownload);
+  document.getElementById('btnPrint').addEventListener('click', function () { showExport(); window.print(); });
+  document.getElementById('btnClear').addEventListener('click', function () {
+    if (window.confirm('Clear the audit log in this browser? Export first if you need it.')) { save(K_AUDIT, []); renderAudit(); }
+  });
+  window.addEventListener('online', renderStatus);
+  window.addEventListener('offline', renderStatus);
+
+  renderStatus(); renderProcs(); renderManual(); renderAudit();
+  audit('info', 'base layer opened', (location.protocol === 'file:' ? 'file://' : location.origin) + ' storage=' + (storageOK ? 'localStorage' : 'memory'));
+
+  // exposed for the degraded-mode test harness only; nothing in this file depends on it
+  window.NEXUS_BASE = { runbook: RUNBOOK, match: matchRunbook, auditText: auditText, storageOK: storageOK };
+})();
+</script>
+</body>
+</html>

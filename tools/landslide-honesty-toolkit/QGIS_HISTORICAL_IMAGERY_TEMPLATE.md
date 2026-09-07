@@ -308,4 +308,3 @@ Now you can:
 ---
 
 *Template Version 1.0 | 2026-09-07*
-*Community Emergency Mapping Initiative*

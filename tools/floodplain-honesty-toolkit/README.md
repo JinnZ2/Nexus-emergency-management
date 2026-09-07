@@ -98,7 +98,7 @@ The QGIS script can be byte-compiled outside QGIS, but end-to-end geoprocessing 
 
 ## License
 
-The toolkit code and original documentation are provided under the MIT License. FEMA, USGS, local-government, and third-party datasets retain their own terms and authoritative status.
+The toolkit code and original documentation are CC0 1.0 Universal, no rights reserved (full text in `LICENSE`). FEMA, USGS, local-government, and third-party datasets retain their own terms and authoritative status.
 
 ## References
 

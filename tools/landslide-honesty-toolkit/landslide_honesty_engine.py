@@ -18,8 +18,7 @@ Output:
     - JSON file for QGIS integration
     - Validation flag file that QGIS processing model reads
 
-License: MIT (Open Source)
-Author: Community Emergency Mapping Initiative
+License: CC0 1.0 Universal. No rights reserved.
 """
 
 import json

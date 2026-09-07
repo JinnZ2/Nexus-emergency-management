@@ -21,15 +21,17 @@ This directory contains configuration and documentation for AI agents interactin
 
 | File | Purpose |
 |------|---------|
-| `src/main.tsx` | Application entry (wrapped in ErrorBoundary) |
-| `src/services/gemini.ts` | AI service layer — calls server proxy, handles offline fallback |
+| `offline/index.html` | BASE LAYER. Runbook, search, decision record, audit log. No network, no server, no key, no build. |
+| `offline/RUNBOOK.md` | Plain-text mirror of the runbook |
+| `src/main.tsx` | Connected-mode application entry (wrapped in ErrorBoundary) |
+| `src/services/gemini.ts` | Assistant service — base layer first, one enhancement request if reachable |
 | `src/types.ts` | Shared TypeScript interfaces |
 | `src/lib/constants.ts` | Physics constants (from orbital-phycom) |
 | `src/lib/orbital.ts` | Orbital mechanics utilities |
 | `src/lib/trdap.ts` | TRDAP data models |
-| `src/lib/runbook.ts` | Offline emergency procedures (5 runbook entries) |
-| `src/lib/audit.ts` | Emergency audit log |
-| `server/api.ts` | Server-side API proxy (multi-provider failover) |
+| `src/lib/runbook.ts` | Reads the base layer runbook at build time |
+| `src/lib/audit.ts` | Emergency audit log (browser profile storage, no export) |
+| `server/api.ts` | Server-side API proxy for enhancement providers |
 
 ## ICS Integration
 
@@ -39,7 +41,7 @@ AI agents are integrated as ICS partners in `src/lib/ics/`:
 |------|---------|
 | `ai-integration.ts` | 5 AI partner roles, authority levels, handoff protocols |
 | `staging.ts` | Action staging queue - propose here, humans review |
-| `decision-log.ts` | Accountability trail - every decision is recorded permanently |
+| `decision-log.ts` | Accountability trail - browser profile storage; measured state in `INVESTIGATION.md` E1 |
 | `training.ts` | 8 training modules - read these to understand your role |
 | `command.ts` | ICS org hierarchy - know who you report to |
 | `protocols.ts` | Domain SOPs and deviation triggers |

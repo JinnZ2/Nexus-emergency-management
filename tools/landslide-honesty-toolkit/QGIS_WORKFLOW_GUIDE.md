@@ -1,6 +1,6 @@
 # LANDSLIDE SUSCEPTIBILITY MAPPING — QGIS WORKFLOW GUIDE
 ## Open-Source Emergency Management Tool
-### Version 1.0 | Community Emergency Mapping Initiative
+### Version 1.0 | CC0, no rights reserved
 
 ---
 
@@ -686,7 +686,7 @@ If reading is difficult, ask a friend or community member to:
 
 ## LICENSE & ATTRIBUTION
 
-This workflow and the Honesty Engine are released under the **MIT License**.
+This workflow and the Honesty Engine are released under **CC0 1.0 Universal**. No rights reserved. Full text in `LICENSE`.
 
 You may:
 - Use for any purpose (personal, commercial, government)
@@ -720,4 +720,3 @@ When publishing maps, include:
 
 ---
 *Document Version 1.0 | 2026-09-07*
-*Community Emergency Mapping Initiative*

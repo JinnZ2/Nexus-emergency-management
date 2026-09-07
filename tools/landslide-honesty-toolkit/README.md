@@ -31,6 +31,7 @@ A complete open-source system for landslide susceptibility mapping that **enforc
 | `QGIS_WORKFLOW_GUIDE.md` | Complete step-by-step guide | QGIS users |
 | `COMMUNITY_TOOLKIT.md` | Local reporting & neighbor networks | Community leaders |
 | `QUICK_START_GUIDE.md` | Dyslexic-friendly quick reference | Everyone |
+| `TRAINING_MODULE.md` | Self-service training: coverage report first, five-state graded finding, open data only (CC0) | Everyone, no GIS background |
 | `architecture_diagram.png` | Visual system overview | Everyone |
 | `us_state_coverage_map.png` | State inventory coverage map | Everyone |
 
@@ -210,17 +211,12 @@ When internet fails:
 
 ## ⚖️ LICENSE
 
-This project is released under the **MIT License**.
+CC0 1.0 Universal. No rights reserved. Full text in `LICENSE`.
 
-You may:
-- Use for any purpose (personal, commercial, government, educational)
-- Modify and redistribute
-- Use in emergency management
-- Integrate into other tools
+Use for any purpose, modify, redistribute, integrate. No credit required.
 
-You must:
-- **Keep the honesty warnings** (do not remove UNVALIDATED labels)
-- Credit: "Produced using the Landslide Honesty Engine"
+Asked, not required:
+- **Keep the honesty warnings** (do not remove UNVALIDATED labels). This is a safety practice, not a licence term.
 - Share improvements with the community
 
 **The data sources have their own licenses** (mostly public domain or CC-BY). Check each source before redistributing raw data.
@@ -305,5 +301,4 @@ This toolkit produces **susceptibility maps**, not **hazard maps**.
 
 ---
 *Landslide Susceptibility Mapping System v1.0*
-*Community Emergency Mapping Initiative*
 *2026-09-07*
