@@ -28,15 +28,15 @@
 | Unauthorized emergency action | `isLocked` gate + `requiresAuth` + typed confirmation |
 | AI acting beyond authority | Authority levels enforced, staging queue human-gated |
 | Unaccountable decisions | Decision log with mandatory rationale, exportable JSON |
-| Single provider failure | Automatic failover chain with per-provider circuit breakers |
-| Total AI unavailability | Client-side offline runbook with keyword matching |
+| Single provider failure (one vendor down, one key, one rate limit) | Per-provider circuit breakers; the other vendors take the enhancement request |
+| Connectivity loss (no power, no local net, no backhaul) | The base layer (`offline/index.html`) runs first and always. The three providers are one channel here; see `channels.md`. |
 | UI crash during emergency | ErrorBoundary with fallback UI, backend stays operational |
 | XSS via AI response | React's built-in escaping, `whitespace-pre-wrap` only |
 | Dependency vulnerabilities | Lock file committed, `npm audit` recommended in CI |
 
 ## Decision Accountability
 
-The decision log (`src/lib/ics/decision-log.ts`) creates a permanent record:
+The decision log (`src/lib/ics/decision-log.ts`) records, in the localStorage of the browser profile that wrote it (survival conditions and the measured state of the write path are in `INVESTIGATION.md` E1):
 
 - **What AI proposed**: title, description, rationale, confidence, risk, timestamp
 - **What human decided**: approve/reject, written rationale (mandatory), response time, who decided

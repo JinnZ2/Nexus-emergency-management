@@ -5,8 +5,18 @@
     "trdap": {
       "description": "Technical Resource Deployment and Analysis Platform",
       "access": "read_write",
-      "metrics": ["latency", "cpu", "memory", "status"],
-      "service_layers": ["edge", "compute", "storage", "core"],
+      "metrics": [
+        "latency",
+        "cpu",
+        "memory",
+        "status"
+      ],
+      "service_layers": [
+        "edge",
+        "compute",
+        "storage",
+        "core"
+      ],
       "total_services": 16
     },
     "orbital_phycom": {
@@ -21,45 +31,104 @@
       "description": "Emergency Intervention Protocols",
       "access": "restricted",
       "requires_auth": true,
-      "actions": ["kill_switch", "safe_mode", "cache_flush", "bgp_reroute"]
+      "actions": [
+        "kill_switch",
+        "safe_mode",
+        "cache_flush",
+        "bgp_reroute"
+      ]
     },
     "ics": {
       "description": "Incident Command System (NIMS compliant)",
       "library": "src/lib/ics/",
       "roles": 14,
       "ai_partner_roles": 5,
-      "resource_domains": ["communication", "electricity", "water", "labor", "emergency_services"],
+      "resource_domains": [
+        "communication",
+        "electricity",
+        "water",
+        "labor",
+        "emergency_services"
+      ],
       "incident_levels": 5,
       "training_modules": 8
     }
   },
   "ai_partners": {
     "roles": [
-      { "id": "ai-ops-monitor", "title": "AI Operations Monitor", "reports_to": "ops-chief", "authority": "recommend" },
-      { "id": "ai-planning-analyst", "title": "AI Planning Analyst", "reports_to": "planning-chief", "authority": "assist" },
-      { "id": "ai-logistics-optimizer", "title": "AI Logistics Optimizer", "reports_to": "logistics-chief", "authority": "recommend" },
-      { "id": "ai-comms-coordinator", "title": "AI Communications Coordinator", "reports_to": "comms-lead", "authority": "autonomous" },
-      { "id": "ai-safety-sentinel", "title": "AI Safety Sentinel", "reports_to": "safety", "authority": "recommend" }
+      {
+        "id": "ai-ops-monitor",
+        "title": "AI Operations Monitor",
+        "reports_to": "ops-chief",
+        "authority": "recommend"
+      },
+      {
+        "id": "ai-planning-analyst",
+        "title": "AI Planning Analyst",
+        "reports_to": "planning-chief",
+        "authority": "assist"
+      },
+      {
+        "id": "ai-logistics-optimizer",
+        "title": "AI Logistics Optimizer",
+        "reports_to": "logistics-chief",
+        "authority": "recommend"
+      },
+      {
+        "id": "ai-comms-coordinator",
+        "title": "AI Communications Coordinator",
+        "reports_to": "comms-lead",
+        "authority": "autonomous"
+      },
+      {
+        "id": "ai-safety-sentinel",
+        "title": "AI Safety Sentinel",
+        "reports_to": "safety",
+        "authority": "recommend"
+      }
     ],
     "staging_queue": {
       "storage": "localStorage",
       "max_entries": 200,
       "rationale_required": true,
-      "auto_logs_to_decision_trail": true
+      "auto_logs_to_decision_trail": true,
+      "note": "localStorage of one browser profile; see INVESTIGATION.md E1"
     },
     "decision_log": {
       "storage": "localStorage",
       "max_entries": 1000,
       "exportable": true,
-      "tracks": ["ai_proposal", "human_decision", "outcome"],
-      "rationale_mandatory": true
+      "tracks": [
+        "ai_proposal",
+        "human_decision",
+        "outcome"
+      ],
+      "rationale_mandatory": true,
+      "note": "localStorage of one browser profile; staging->decision-log write measured as not reaching storage; see INVESTIGATION.md E1"
     }
   },
   "providers": {
-    "failover_chain": ["gemini", "claude", "openai", "offline_runbook"],
+    "base": "offline/index.html",
+    "base_mirror": "offline/RUNBOOK.md",
+    "order": "base first, always; enhancement only if a probe has shown a provider reachable",
+    "enhancement_chain": [
+      "gemini",
+      "claude",
+      "openai"
+    ],
+    "enhancement_is_one_channel_against": [
+      "no_power",
+      "no_local_net",
+      "no_backhaul"
+    ],
     "circuit_breaker": {
       "threshold": 5,
-      "reset_timeout_ms": 60000
+      "reset_timeout_ms": 60000,
+      "covers": [
+        "provider_down",
+        "account_key",
+        "rate_limit"
+      ]
     }
   },
   "constraints": {
@@ -76,13 +145,18 @@
       "name": "orbital-phycom",
       "url": "https://github.com/JinnZ2/orbital-phycom",
       "language": "python",
-      "synced_to": ["src/lib/constants.ts", "src/lib/orbital.ts"]
+      "synced_to": [
+        "src/lib/constants.ts",
+        "src/lib/orbital.ts"
+      ]
     },
     {
       "name": "Infrastructure-assistance",
       "url": "https://github.com/JinnZ2/Infrastructure-assistance",
       "language": "typescript",
-      "synced_to": ["src/lib/trdap.ts"]
+      "synced_to": [
+        "src/lib/trdap.ts"
+      ]
     }
   ]
 }
