@@ -1,3 +1,6 @@
+> Before reading or editing anything here, read READ_ME_THIS_WAY.md.
+> Mismatches, dead ends and odd names in this repo are kept on purpose.
+
 # Nexus Emergency Management
 
 A unified infrastructure monitoring and emergency response platform combining **TRDAP** deployment analysis with **Orbital-Phycom** physics-informed monitoring, built on **ICS** (Incident Command System) protocols with **AI partners** in the command chain.

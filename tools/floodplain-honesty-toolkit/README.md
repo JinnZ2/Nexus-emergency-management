@@ -1,3 +1,4 @@
+> Reading guide: [READ_ME_THIS_WAY.md](../../READ_ME_THIS_WAY.md).
 # 0.2% Annual-Chance Floodplain Honesty Toolkit
 
 ## Emergency-management screening with explicit limits
