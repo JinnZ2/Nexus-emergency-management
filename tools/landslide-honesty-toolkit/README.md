@@ -1,3 +1,4 @@
+> Reading guide: [READ_ME_THIS_WAY.md](../../READ_ME_THIS_WAY.md).
 # LANDSLIDE SUSCEPTIBILITY MAPPING SYSTEM
 ## Open-Source Emergency Management Toolkit
 ### Honesty-First Design | US Focus with Global Path
